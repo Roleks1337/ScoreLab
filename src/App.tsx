@@ -2,10 +2,17 @@ import { useState, useEffect } from 'react'
 import './index.css'
 import './App.css'
 import logoFull from './assets/Extended_ScoreLab.png'
+import logoSmall from './assets/ScoreLabSmall.png'
 
 /* ── Navbar ────────────────────────────────────────────────── */
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const handleLogoClick = () => {
+    const homeUrl = `${window.location.pathname}${window.location.search}`
+    window.location.assign(homeUrl)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -13,24 +20,64 @@ function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
+  const closeMenu = () => setMenuOpen(false)
+
   return (
-    <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
-      <div className="navbar__logo">
-        <img src={logoFull} alt="ScoreLab" />
+    <>
+      <nav className={`navbar${scrolled ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
+        <div
+          className="navbar__logo"
+          role="button"
+          tabIndex={0}
+          aria-label="Przejdź na stronę główną"
+          onClick={handleLogoClick}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              handleLogoClick()
+            }
+          }}
+        >
+          <img className="logo--full" src={logoFull} alt="ScoreLab" />
+          <img className="logo--small" src={logoSmall} alt="ScoreLab" />
+        </div>
+        <div className="navbar__nav">
+          <a href="#kursy">Kursy</a>
+          <a href="#jak-to-dziala">Jak to działa</a>
+          <a href="#cennik">Cennik</a>
+          <a href="#opinie">Opinie</a>
+        </div>
+        <div className="navbar__actions">
+          <span className="navbar__platform-label">Platforma</span>
+        </div>
+        <button
+          className={`hamburger${menuOpen ? ' hamburger--open' : ''}`}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(prev => !prev)}
+        >
+          <span /><span /><span />
+        </button>
+      </nav>
+
+      {/* Mobile drawer */}
+      <div className={`mobile-menu${menuOpen ? ' mobile-menu--open' : ''}`} aria-hidden={!menuOpen}>
+        <nav className="mobile-menu__nav">
+          <a href="#kursy"      onClick={closeMenu}>Kursy</a>
+          <a href="#jak-to-dziala" onClick={closeMenu}>Jak to działa</a>
+          <a href="#cennik"     onClick={closeMenu}>Cennik</a>
+          <a href="#opinie"     onClick={closeMenu}>Opinie</a>
+        </nav>
       </div>
-      <div className="navbar__nav">
-        <a href="#kursy">Kursy</a>
-        <a href="#jak-to-dziala">Jak to działa</a>
-        <a href="#cennik">Cennik</a>
-        <a href="#opinie">Opinie</a>
-      </div>
-      <div className="navbar__actions">
-        <span className="navbar__platform-label">Platforma</span>
-      </div>
-      <button className="hamburger" aria-label="Menu">
-        <span /><span /><span />
-      </button>
-    </nav>
+
+      {/* Backdrop */}
+      {menuOpen && <div className="mobile-menu__backdrop" onClick={closeMenu} />}
+    </>
   )
 }
 
