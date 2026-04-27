@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react'
+import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './index.css'
 import './App.css'
+import Pricing from './components/Pricing'
+import Courses from './components/Courses'
+import CoursePlayer from './components/CoursePlayer'
 import logoFull from './assets/Extended_ScoreLab.png'
 import logoSmall from './assets/ScoreLabSmall.png'
 
@@ -8,10 +12,14 @@ import logoSmall from './assets/ScoreLabSmall.png'
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
+
+  const isHomePage = location.pathname === '/'
+  const sectionHref = (sectionId: string) => (isHomePage ? `#${sectionId}` : `/#${sectionId}`)
 
   const handleLogoClick = () => {
-    const homeUrl = `${window.location.pathname}${window.location.search}`
-    window.location.assign(homeUrl)
+    navigate('/')
   }
 
   useEffect(() => {
@@ -47,13 +55,12 @@ function Navbar() {
           <img className="logo--small" src={logoSmall} alt="ScoreLab" />
         </div>
         <div className="navbar__nav">
-          <a href="#kursy">Kursy</a>
-          <a href="#jak-to-dziala">Jak to działa</a>
-          <a href="#cennik">Cennik</a>
-          <a href="#opinie">Opinie</a>
+          <Link to="/kursy">Kursy</Link>
+          <a href={sectionHref('jak-to-dziala')}>Jak to działa</a>
+          <a href={sectionHref('opinie')}>Opinie</a>
         </div>
         <div className="navbar__actions">
-          <span className="navbar__platform-label">Platforma</span>
+          <Link className="navbar__platform-label" to="/cennik">Platforma</Link>
         </div>
         <button
           className={`hamburger${menuOpen ? ' hamburger--open' : ''}`}
@@ -68,10 +75,10 @@ function Navbar() {
       {/* Mobile drawer */}
       <div className={`mobile-menu${menuOpen ? ' mobile-menu--open' : ''}`} aria-hidden={!menuOpen}>
         <nav className="mobile-menu__nav">
-          <a href="#kursy"      onClick={closeMenu}>Kursy</a>
-          <a href="#jak-to-dziala" onClick={closeMenu}>Jak to działa</a>
-          <a href="#cennik"     onClick={closeMenu}>Cennik</a>
-          <a href="#opinie"     onClick={closeMenu}>Opinie</a>
+          <Link to="/kursy" onClick={closeMenu}>Kursy</Link>
+          <a href={sectionHref('jak-to-dziala')} onClick={closeMenu}>Jak to działa</a>
+          <Link to="/cennik" onClick={closeMenu}>Cennik</Link>
+          <a href={sectionHref('opinie')} onClick={closeMenu}>Opinie</a>
         </nav>
       </div>
 
@@ -165,65 +172,103 @@ function Hero() {
   )
 }
 
-/* ── Features ──────────────────────────────────────────────── */
+/* ── Features Showcase ───────────────────────────────────────── */
 const featuresData = [
   {
     icon: '🎓',
-    iconClass: 'feature-card__icon--blue',
     title: 'Lekcje video od eksperta',
     text: 'Jasne, zwięzłe wyjaśnienia każdego działu. Wróć do lekcji ile razy potrzebujesz, bez presji czasu.',
+    color: 'var(--blue-light)'
   },
   {
     icon: '✏️',
-    iconClass: 'feature-card__icon--cream',
     title: 'Ćwiczenia krok po kroku',
     text: 'Setki zadań z pełnymi rozwiązaniami i wskazówkami. System inteligentnie dobiera trudność do Twojego poziomu.',
+    color: '#FFBFA2'
   },
   {
     icon: '📊',
-    iconClass: 'feature-card__icon--green',
     title: 'Śledzenie postępów',
     text: 'Widzisz dokładnie, jakie działy opanowałeś, a gdzie masz luki. Planer nauki dostosowuje się do Twojego harmonogramu.',
+    color: '#95E2B4'
   },
   {
     icon: '📝',
-    iconClass: 'feature-card__icon--blue',
     title: 'Archiwum arkuszy CKE',
     text: 'Rozwiązuj oryginalne arkusze maturalne z lat 2010–2024. Pełne omówienia po każdym teście.',
+    color: 'var(--blue-pale)'
   },
   {
     icon: '⚡',
-    iconClass: 'feature-card__icon--cream',
     title: 'Szybkie powtórki',
     text: 'Karty powtórkowe i błyskawiczne quizy do nauki wzorów i reguł przed samym egzaminem.',
+    color: 'var(--cream)'
   },
   {
     icon: '💬',
-    iconClass: 'feature-card__icon--green',
     title: 'Wsparcie społeczności',
     text: 'Grono uczniów i nauczycieli zawsze gotowe do pomocy. Forum, czat i live Q&A sesje co tydzień.',
+    color: '#95E2B4'
   },
 ]
 
 function Features() {
+  const [activeIndex, setActiveIndex] = useState(0);
+
   return (
-    <section className="features" id="kursy">
+    <section className="features-showcase" id="cechy">
       <div className="container">
-        <div className="features__header">
+        <div className="features-showcase__header">
           <div className="section-label">Dlaczego ScoreLab?</div>
           <h2 className="section-title">Wszystko, czego<br />potrzebujesz do matury</h2>
-          <p className="section-subtitle">
-            Kompleksowa platforma zaprojektowana specjalnie pod wymagania egzaminu maturalnego z matematyki.
-          </p>
         </div>
-        <div className="features__grid">
-          {featuresData.map((f) => (
-            <div key={f.title} className="feature-card">
-              <div className={`feature-card__icon ${f.iconClass}`}>{f.icon}</div>
-              <h3 className="feature-card__title">{f.title}</h3>
-              <p className="feature-card__text">{f.text}</p>
-            </div>
-          ))}
+        
+        <div className="features-showcase__layout-horizontal">
+          {/* Top Row: Tabs */}
+          <div className="features-showcase__tabs">
+            {featuresData.map((f, index) => {
+              const isActive = index === activeIndex;
+              return (
+                <button 
+                  key={f.title} 
+                  className={`showcase-tab ${isActive ? 'active' : ''}`}
+                  onClick={() => setActiveIndex(index)}
+                  style={{
+                    backgroundColor: isActive ? 'var(--black)' : 'var(--white)',
+                    color: isActive ? 'var(--white)' : 'var(--text-secondary)',
+                    borderColor: isActive ? 'var(--black)' : 'var(--border)'
+                  }}
+                >
+                  <span className="showcase-tab__title">{f.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Bottom Area: Visual */}
+          <div className="features-showcase__visual-wide">
+            <Link to="/kursy" className="showcase-visual-card-wide" style={{ textDecoration: 'none' }}>
+              <div 
+                className="showcase-visual-card-wide__bg" 
+                style={{ 
+                  background: `radial-gradient(circle at 80% 50%, ${featuresData[activeIndex].color} 0%, transparent 60%)` 
+                }}
+              />
+              <div className="showcase-visual-card-wide__inner">
+                <div className="showcase-visual-card-wide__text-content">
+                  <h3 key={`title-${activeIndex}`}>{featuresData[activeIndex].title}</h3>
+                  <p key={`text-${activeIndex}`}>{featuresData[activeIndex].text}</p>
+                  <div className="showcase-visual-card-wide__cta">Zobacz kursy →</div>
+                </div>
+                <div 
+                  className="showcase-visual-card-wide__icon"
+                  key={`icon-${activeIndex}`}
+                >
+                  {featuresData[activeIndex].icon}
+                </div>
+              </div>
+            </Link>
+          </div>
         </div>
       </div>
     </section>
@@ -347,96 +392,6 @@ function HowItWorks() {
   )
 }
 
-/* ── Pricing ───────────────────────────────────────────────── */
-const plans = [
-  {
-    name: 'Bez logowania',
-    price: 0,
-    period: 'zawsze',
-    badge: null,
-    featured: false,
-    features: [
-      'Przeglądanie materiałów bez konta',
-      'Dostęp do wybranych lekcji demo',
-      'Darmowe arkusze CKE 2020–2024',
-      'Test poziomujący',
-    ],
-    cta: 'Zacznij bez rejestracji',
-    ctaClass: 'btn-secondary',
-  },
-  {
-    name: 'Zalogowana',
-    price: 0,
-    period: 'zawsze',
-    badge: 'Zalecany start',
-    featured: true,
-    features: [
-      'Wszystko z planu Bez logowania',
-      'Śledzenie postępów i statystyki',
-      'Spersonalizowany plan nauki',
-      'Forum społeczności',
-      'Zapisywanie ulubionych materiałów',
-      'Historia rozwiązanych zadań',
-    ],
-    cta: 'Załóż darmowe konto',
-    ctaClass: 'btn-blue',
-  },
-  {
-    name: 'Premium',
-    price: 30,
-    period: 'mies.',
-    badge: null,
-    featured: false,
-    features: [
-      'Wszystko z planu Zalogowana',
-      'Pełny dostęp do wszystkich lekcji',
-      'Live Q&A sesje z nauczycielem',
-      'Priorytetowe wsparcie na czacie',
-    ],
-    cta: 'Wybierz Premium',
-    ctaClass: 'btn-primary',
-  },
-]
-
-function Pricing() {
-  return (
-    <section className="pricing" id="cennik">
-      <div className="container">
-        <div className="pricing__header">
-          <div className="section-label">Cennik</div>
-          <h2 className="section-title">Plan dla każdego</h2>
-          <p className="section-subtitle">Zacznij za darmo, zapłać gdy zobaczysz efekty. Bez zobowiązań, cancel w dowolnej chwili.</p>
-        </div>
-        <div className="pricing__grid">
-          {plans.map(plan => (
-            <div key={plan.name} className={`pricing-card${plan.featured ? ' pricing-card--featured' : ''}`}>
-              {plan.badge && <div className="pricing-card__badge">{plan.badge}</div>}
-              <div className="pricing-card__name">{plan.name}</div>
-              <div className="pricing-card__price">
-                <span className="pricing-card__currency">zł</span>
-                <span className="pricing-card__amount">{plan.price}</span>
-                <span className="pricing-card__period">/{plan.period}</span>
-              </div>
-              <div className="pricing-card__divider" />
-              <ul className="pricing-card__features">
-                {plan.features.map(f => (
-                  <li key={f} className="pricing-feature">
-                    <span className="pricing-feature__check">✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="pricing-card__cta">
-                <button id={`pricing-btn-${plan.name.toLowerCase()}`} className={`btn ${plan.ctaClass}`}>{plan.cta}</button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /* ── Testimonials ──────────────────────────────────────────── */
 const testimonials = [
   {
@@ -460,6 +415,41 @@ const testimonials = [
     name: 'Aleksandra P.',
     meta: 'Matura 2024 · 96%',
   },
+  {
+    stars: 5,
+    text: '„Bardzo podoba mi się przejrzysty interfejs i system śledzenia postępów. Dzięki temu wiedziałem, na czym muszę się jeszcze skupić."',
+    initials: 'JK',
+    name: 'Jan K.',
+    meta: 'Matura 2024 · 90%',
+  },
+  {
+    stars: 4,
+    text: '„Super sprawa z tymi krótkimi wideo. Mogłem uczyć się w drodze do szkoły. Zdecydowanie polecam każdemu maturzyście!"',
+    initials: 'PW',
+    name: 'Piotr W.',
+    meta: 'Matura 2024 · 84%',
+  },
+  {
+    stars: 5,
+    text: '„Zawsze miałam problem z prawdopodobieństwem, ale po przerobieniu tego działu na ScoreLab nagle wszystko stało się logiczne."',
+    initials: 'KW',
+    name: 'Karolina W.',
+    meta: 'Matura 2024 · 98%',
+  },
+  {
+    stars: 5,
+    text: '„Nie wierzyłem, że można się tak dobrze przygotować do matury przez internet. A jednak! Dziękuję całej ekipie ScoreLab."',
+    initials: 'MD',
+    name: 'Michał D.',
+    meta: 'Matura 2024 · 100%',
+  },
+  {
+    stars: 5,
+    text: '„Najlepsza inwestycja przed maturą. Zamiast wydawać fortunę na korepetycje, miałam dostęp do świetnych materiałów 24/7."',
+    initials: 'AL',
+    name: 'Anna L.',
+    meta: 'Matura 2024 · 94%',
+  }
 ]
 
 function Testimonials() {
@@ -471,19 +461,94 @@ function Testimonials() {
           <h2 className="section-title">Mówią o nas uczniowie</h2>
           <p className="section-subtitle">Ponad 2 400 osób zdało maturę z pomocą ScoreLab. Oto, co o nas mówią.</p>
         </div>
-        <div className="testimonials__grid">
-          {testimonials.map(t => (
-            <div key={t.name} className="testimonial-card">
-              <div className="testimonial-card__stars">
-                {Array.from({ length: t.stars }).map((_, i) => <span key={i}>⭐</span>)}
-              </div>
-              <p className="testimonial-card__text">{t.text}</p>
-              <div className="testimonial-card__author">
-                <div className="testimonial-card__avatar">{t.initials}</div>
-                <div>
-                  <div className="testimonial-card__name">{t.name}</div>
-                  <div className="testimonial-card__meta">{t.meta}</div>
+        <div className="testimonials__slider">
+          <div className="testimonials__group">
+            {testimonials.map(t => (
+              <div key={t.name} className="testimonial-card">
+                <div className="testimonial-card__stars">
+                  {Array.from({ length: t.stars }).map((_, i) => <span key={i}>⭐</span>)}
                 </div>
+                <p className="testimonial-card__text">{t.text}</p>
+                <div className="testimonial-card__author">
+                  <div className="testimonial-card__avatar">{t.initials}</div>
+                  <div>
+                    <div className="testimonial-card__name">{t.name}</div>
+                    <div className="testimonial-card__meta">{t.meta}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="testimonials__group" aria-hidden="true">
+            {testimonials.map(t => (
+              <div key={`${t.name}-copy`} className="testimonial-card">
+                <div className="testimonial-card__stars">
+                  {Array.from({ length: t.stars }).map((_, i) => <span key={i}>⭐</span>)}
+                </div>
+                <p className="testimonial-card__text">{t.text}</p>
+                <div className="testimonial-card__author">
+                  <div className="testimonial-card__avatar">{t.initials}</div>
+                  <div>
+                    <div className="testimonial-card__name">{t.name}</div>
+                    <div className="testimonial-card__meta">{t.meta}</div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+/* ── FAQ ───────────────────────────────────────────────────── */
+const faqData = [
+  {
+    question: 'Czy darmowe kursy obejmują całą wiedzę do matury?',
+    answer: 'Tak, kursy są w 100% darmowe i zawierają kompleksową wiedzę potrzebną do zdania matury. Z kontem Premium oglądasz je bez reklam.'
+  },
+  {
+    question: 'Jakie przedmioty są dostępne?',
+    answer: 'Obecnie skupiamy się na matematyce, języku polskim i języku angielskim na poziomie podstawowym. Stale poszerzamy naszą ofertę.'
+  },
+  {
+    question: 'Czy muszę zakładać konto, żeby się uczyć?',
+    answer: 'Nie, wszystkie materiały wideo możesz przeglądać bez logowania. Darmowe konto przydaje się jednak do śledzenia postępów i rozwiązywania testów.'
+  },
+  {
+    question: 'Co jeszcze daje status Premium?',
+    answer: 'Oprócz braku reklam podczas oglądania lekcji wideo, zyskujesz dostęp do priorytetowej pomocy nauczycieli na naszym forum oraz ekskluzywnych arkuszy zadań.'
+  }
+];
+
+function FAQ() {
+  const [openIndex, setOpenIndex] = useState<number | null>(null);
+
+  const toggle = (index: number) => {
+    setOpenIndex(openIndex === index ? null : index);
+  };
+
+  return (
+    <section className="faq" id="faq">
+      <div className="container">
+        <div className="faq__header">
+          <div className="section-label">FAQ</div>
+          <h2 className="section-title">Często zadawane pytania</h2>
+          <p className="section-subtitle">Masz wątpliwości? Tutaj znajdziesz odpowiedzi na najpopularniejsze pytania.</p>
+        </div>
+        <div className="faq__list">
+          {faqData.map((item, index) => (
+            <div 
+              key={index} 
+              className={`faq__item ${openIndex === index ? 'faq__item--open' : ''}`}
+            >
+              <button className="faq__question" onClick={() => toggle(index)}>
+                {item.question}
+                <span className="faq__icon">{openIndex === index ? '−' : '+'}</span>
+              </button>
+              <div className="faq__answer">
+                <p className="faq__answer-inner">{item.answer}</p>
               </div>
             </div>
           ))}
@@ -563,16 +628,54 @@ function Footer() {
 /* ── App ───────────────────────────────────────────────────── */
 export default function App() {
   return (
-    <>
-      <Navbar />
-      <Hero />
-      <Features />
-      <Bento />
-      <HowItWorks />
-      <Pricing />
-      <Testimonials />
-      <CTABanner />
-      <Footer />
-    </>
+    <Routes>
+      <Route
+        path="/"
+        element={
+          <>
+            <Navbar />
+            <Hero />
+            <Features />
+            <Bento />
+            <HowItWorks />
+            <Testimonials />
+            <FAQ />
+            <CTABanner />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/cennik"
+        element={
+          <>
+            <Navbar />
+            <Pricing />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/kursy"
+        element={
+          <>
+            <Navbar />
+            <Courses />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/kursy/:courseId"
+        element={
+          <>
+            <Navbar />
+            <CoursePlayer />
+            <Footer />
+          </>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   )
 }
