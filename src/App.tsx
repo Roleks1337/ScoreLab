@@ -2,9 +2,17 @@ import { useState, useEffect } from 'react'
 import './index.css'
 import './App.css'
 import logoFull from './assets/Extended_ScoreLab.png'
+import logoSmall from './assets/ScoreLabSmall.png'
+
 /* ── Navbar ────────────────────────────────────────────────── */
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
+
+  const handleLogoClick = () => {
+    const homeUrl = `${window.location.pathname}${window.location.search}`
+    window.location.assign(homeUrl)
+  }
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20)
@@ -12,25 +20,64 @@ function Navbar() {
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
 
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? 'hidden' : ''
+    return () => { document.body.style.overflow = '' }
+  }, [menuOpen])
+
+  const closeMenu = () => setMenuOpen(false)
+
   return (
-    <nav className={`navbar${scrolled ? ' scrolled' : ''}`}>
-      <div className="navbar__logo">
-        <img src={logoFull} alt="ScoreLab" />
+    <>
+      <nav className={`navbar${scrolled ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
+        <div
+          className="navbar__logo"
+          role="button"
+          tabIndex={0}
+          aria-label="Przejdź na stronę główną"
+          onClick={handleLogoClick}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter' || event.key === ' ') {
+              event.preventDefault()
+              handleLogoClick()
+            }
+          }}
+        >
+          <img className="logo--full" src={logoFull} alt="ScoreLab" />
+          <img className="logo--small" src={logoSmall} alt="ScoreLab" />
+        </div>
+        <div className="navbar__nav">
+          <a href="#kursy">Kursy</a>
+          <a href="#jak-to-dziala">Jak to działa</a>
+          <a href="#cennik">Cennik</a>
+          <a href="#opinie">Opinie</a>
+        </div>
+        <div className="navbar__actions">
+          <span className="navbar__platform-label">Platforma</span>
+        </div>
+        <button
+          className={`hamburger${menuOpen ? ' hamburger--open' : ''}`}
+          aria-label="Menu"
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen(prev => !prev)}
+        >
+          <span /><span /><span />
+        </button>
+      </nav>
+
+      {/* Mobile drawer */}
+      <div className={`mobile-menu${menuOpen ? ' mobile-menu--open' : ''}`} aria-hidden={!menuOpen}>
+        <nav className="mobile-menu__nav">
+          <a href="#kursy"      onClick={closeMenu}>Kursy</a>
+          <a href="#jak-to-dziala" onClick={closeMenu}>Jak to działa</a>
+          <a href="#cennik"     onClick={closeMenu}>Cennik</a>
+          <a href="#opinie"     onClick={closeMenu}>Opinie</a>
+        </nav>
       </div>
-      <div className="navbar__nav">
-        <a href="#kursy">Kursy</a>
-        <a href="#jak-to-dziala">Jak to działa</a>
-        <a href="#cennik">Cennik</a>
-        <a href="#opinie">Opinie</a>
-      </div>
-      <div className="navbar__actions">
-        <button className="btn btn-secondary">Zaloguj się</button>
-        <button className="btn btn-primary">Zacznij za darmo</button>
-      </div>
-      <button className="hamburger" aria-label="Menu">
-        <span /><span /><span />
-      </button>
-    </nav>
+
+      {/* Backdrop */}
+      {menuOpen && <div className="mobile-menu__backdrop" onClick={closeMenu} />}
+    </>
   )
 }
 
@@ -303,50 +350,50 @@ function HowItWorks() {
 /* ── Pricing ───────────────────────────────────────────────── */
 const plans = [
   {
-    name: 'Starter',
+    name: 'Bez logowania',
     price: 0,
     period: 'zawsze',
     badge: null,
     featured: false,
     features: [
-      'Dostęp do 10 lekcji demo',
+      'Przeglądanie materiałów bez konta',
+      'Dostęp do wybranych lekcji demo',
       'Darmowe arkusze CKE 2020–2024',
-      'Forum społeczności',
       'Test poziomujący',
     ],
-    cta: 'Zacznij za darmo',
+    cta: 'Zacznij bez rejestracji',
     ctaClass: 'btn-secondary',
   },
   {
-    name: 'Pro',
-    price: 49,
-    period: 'mies.',
-    badge: 'Najpopularniejszy',
+    name: 'Zalogowana',
+    price: 0,
+    period: 'zawsze',
+    badge: 'Zalecany start',
     featured: true,
     features: [
-      'Pełny dostęp do wszystkich lekcji',
-      'Wszystkie arkusze CKE 2010–2024',
+      'Wszystko z planu Bez logowania',
+      'Śledzenie postępów i statystyki',
       'Spersonalizowany plan nauki',
-      'Śledzenie postępów',
-      'Live Q&A sesje',
-      'Wsparcie na czacie',
+      'Forum społeczności',
+      'Zapisywanie ulubionych materiałów',
+      'Historia rozwiązanych zadań',
     ],
-    cta: 'Zacznij 7 dni za darmo',
+    cta: 'Załóż darmowe konto',
     ctaClass: 'btn-blue',
   },
   {
-    name: 'Intensywny',
-    price: 149,
-    period: 'jednorazowo',
+    name: 'Premium',
+    price: 30,
+    period: 'mies.',
     badge: null,
     featured: false,
     features: [
-      'Wszystko z Pro na 12 miesięcy',
-      'Korepetycje 1:1 (2 sesje)',
-      'Certyfikat ukończenia',
-      'Priorytetowe wsparcie',
+      'Wszystko z planu Zalogowana',
+      'Pełny dostęp do wszystkich lekcji',
+      'Live Q&A sesje z nauczycielem',
+      'Priorytetowe wsparcie na czacie',
     ],
-    cta: 'Kup kurs',
+    cta: 'Wybierz Premium',
     ctaClass: 'btn-primary',
   },
 ]
