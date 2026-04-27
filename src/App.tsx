@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import './index.css'
 import './App.css'
 import logoFull from './assets/Extended_ScoreLab.png'
+
 /* ── Navbar ────────────────────────────────────────────────── */
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
@@ -24,8 +25,7 @@ function Navbar() {
         <a href="#opinie">Opinie</a>
       </div>
       <div className="navbar__actions">
-        <button className="btn btn-secondary">Zaloguj się</button>
-        <button className="btn btn-primary">Zacznij za darmo</button>
+        <span className="navbar__platform-label">Platforma</span>
       </div>
       <button className="hamburger" aria-label="Menu">
         <span /><span /><span />
@@ -303,50 +303,50 @@ function HowItWorks() {
 /* ── Pricing ───────────────────────────────────────────────── */
 const plans = [
   {
-    name: 'Starter',
+    name: 'Bez logowania',
     price: 0,
     period: 'zawsze',
     badge: null,
     featured: false,
     features: [
-      'Dostęp do 10 lekcji demo',
+      'Przeglądanie materiałów bez konta',
+      'Dostęp do wybranych lekcji demo',
       'Darmowe arkusze CKE 2020–2024',
-      'Forum społeczności',
       'Test poziomujący',
     ],
-    cta: 'Zacznij za darmo',
+    cta: 'Zacznij bez rejestracji',
     ctaClass: 'btn-secondary',
   },
   {
-    name: 'Pro',
-    price: 49,
-    period: 'mies.',
-    badge: 'Najpopularniejszy',
+    name: 'Zalogowana',
+    price: 0,
+    period: 'zawsze',
+    badge: 'Zalecany start',
     featured: true,
     features: [
-      'Pełny dostęp do wszystkich lekcji',
-      'Wszystkie arkusze CKE 2010–2024',
+      'Wszystko z planu Bez logowania',
+      'Śledzenie postępów i statystyki',
       'Spersonalizowany plan nauki',
-      'Śledzenie postępów',
-      'Live Q&A sesje',
-      'Wsparcie na czacie',
+      'Forum społeczności',
+      'Zapisywanie ulubionych materiałów',
+      'Historia rozwiązanych zadań',
     ],
-    cta: 'Zacznij 7 dni za darmo',
+    cta: 'Załóż darmowe konto',
     ctaClass: 'btn-blue',
   },
   {
-    name: 'Intensywny',
-    price: 149,
-    period: 'jednorazowo',
+    name: 'Premium',
+    price: 30,
+    period: 'mies.',
     badge: null,
     featured: false,
     features: [
-      'Wszystko z Pro na 12 miesięcy',
-      'Korepetycje 1:1 (2 sesje)',
-      'Certyfikat ukończenia',
-      'Priorytetowe wsparcie',
+      'Wszystko z planu Zalogowana',
+      'Pełny dostęp do wszystkich lekcji',
+      'Live Q&A sesje z nauczycielem',
+      'Priorytetowe wsparcie na czacie',
     ],
-    cta: 'Kup kurs',
+    cta: 'Wybierz Premium',
     ctaClass: 'btn-primary',
   },
 ]
