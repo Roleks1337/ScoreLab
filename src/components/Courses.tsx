@@ -10,7 +10,8 @@ const coursesData = [
     tasks: 3859,
     rating: 4.9,
     students: '9.578',
-    theme: 'var(--blue-pale)'
+    theme: 'var(--blue-pale)',
+    wip: true
   },
   {
     id: 'matematyka',
@@ -30,7 +31,8 @@ const coursesData = [
     tasks: 1219,
     rating: 4.8,
     students: '7.297',
-    theme: 'var(--bg-light)'
+    theme: 'var(--bg-light)',
+    wip: true
   }
 ];
 
@@ -46,43 +48,65 @@ export default function Courses() {
         </header>
 
         <div className="courses-grid">
-          {coursesData.map(course => (
-            <Link to={`/kursy/${course.id}`} className="course-card" key={course.id}>
-              <div className="course-card__thumbnail" style={{ background: `linear-gradient(135deg, ${course.theme} 0%, var(--surface-alt) 100%)` }}>
-                <span className="course-card__play-icon">▶</span>
-              </div>
-              
-              <div className="course-card__content">
-                <div className="course-card__meta">
-                  {course.lessons} lekcji · {course.tasks} zadań · ⭐ ({course.rating})
-                </div>
-                
-                <h3 className="course-card__title">{course.title}</h3>
-                <p className="course-card__desc">{course.description}</p>
-                
-                <div className="course-card__social">
-                  <div className="avatars">
-                    <div className="avatar" style={{ background: '#FFC8A2' }}></div>
-                    <div className="avatar" style={{ background: '#A2E1FF' }}></div>
-                    <div className="avatar" style={{ background: '#E2A2FF' }}></div>
-                    <div className="avatar" style={{ background: '#A2FFCD' }}></div>
+          {coursesData.map(course => {
+            const CardWrapper = course.wip ? 'div' : Link;
+            // Omijamy problem z typowaniem dynamicznego komponentu rzutując 'to' na cokolwiek lub używając 'as any'
+            const wrapperProps: any = course.wip ? {} : { to: `/kursy/${course.id}` };
+
+            return (
+              <CardWrapper {...wrapperProps} className={`course-card ${course.wip ? 'course-card--wip' : ''}`} key={course.id} style={{ textDecoration: 'none' }}>
+                {course.wip && (
+                  <div className="course-card__wip-overlay">
+                    <span className="course-card__wip-badge">Wkrótce!</span>
                   </div>
-                  <span className="social-text">+{course.students} osób już się uczy</span>
+                )}
+                
+                <div className="course-card__thumbnail" style={{ background: `linear-gradient(135deg, ${course.theme} 0%, var(--surface-alt) 100%)` }}>
+                  <span className="course-card__play-icon">▶</span>
                 </div>
                 
-                <div className="course-card__footer">
-                  <div className="course-card__price-box">
-                    <div className="current-price" style={{ color: 'var(--black)' }}>Darmowy</div>
+                <div className="course-card__content">
+                  <div className="course-card__meta" style={{ opacity: course.wip ? 0.5 : 1 }}>
+                    {course.lessons} lekcji · {course.tasks} zadań · ⭐ ({course.rating})
                   </div>
-                  <button className="btn btn-primary btn-sm">Oglądaj od razu</button>
+                  
+                  <h3 className="course-card__title" style={{ textDecoration: course.wip ? 'line-through' : 'none', opacity: course.wip ? 0.6 : 1 }}>
+                    {course.title}
+                  </h3>
+                  <p className="course-card__desc" style={{ opacity: course.wip ? 0.5 : 1 }}>
+                    {course.description}
+                  </p>
+                  
+                  <div className="course-card__social" style={{ opacity: course.wip ? 0.5 : 1 }}>
+                    <div className="avatars">
+                      <div className="avatar" style={{ background: '#FFC8A2' }}></div>
+                      <div className="avatar" style={{ background: '#A2E1FF' }}></div>
+                      <div className="avatar" style={{ background: '#E2A2FF' }}></div>
+                      <div className="avatar" style={{ background: '#A2FFCD' }}></div>
+                    </div>
+                    <span className="social-text">+{course.students} osób {course.wip ? 'już czeka' : 'już się uczy'}</span>
+                  </div>
+                  
+                  <div className="course-card__footer">
+                    <div className="course-card__price-box">
+                      <div className="current-price" style={{ color: 'var(--black)' }}>Darmowy</div>
+                    </div>
+                    <button 
+                      className={`btn btn-sm ${course.wip ? 'btn-secondary' : 'btn-primary'}`} 
+                      disabled={course.wip}
+                      style={course.wip ? { cursor: 'not-allowed', opacity: 0.6 } : {}}
+                    >
+                      {course.wip ? 'Prace trwają...' : 'Oglądaj od razu'}
+                    </button>
+                  </div>
+                  
+                  <div className="course-card__promo" style={{ opacity: course.wip ? 0.5 : 1 }}>
+                    Dla wszystkich. <span className="promo-badge">Bez reklam w Premium</span>
+                  </div>
                 </div>
-                
-                <div className="course-card__promo">
-                  Dla wszystkich. <span className="promo-badge">Bez reklam w Premium</span>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </CardWrapper>
+            );
+          })}
         </div>
       </div>
     </div>
