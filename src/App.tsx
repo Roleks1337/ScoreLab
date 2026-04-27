@@ -2,8 +2,6 @@ import { useState, useEffect } from 'react'
 import './index.css'
 import './App.css'
 import logoFull from './assets/Extended_ScoreLab.png'
-import logoIcon from './assets/ScoreLab_Logo.png'
-
 /* ── Navbar ────────────────────────────────────────────────── */
 function Navbar() {
   const [scrolled, setScrolled] = useState(false)
