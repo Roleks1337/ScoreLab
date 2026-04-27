@@ -58,6 +58,7 @@ function Navbar() {
           <Link to="/kursy">Kursy</Link>
           <a href={sectionHref('jak-to-dziala')}>Jak to działa</a>
           <a href={sectionHref('opinie')}>Opinie</a>
+          <Link to="/wip" className="navbar__support-link" style={{ color: 'var(--blue-light)', fontWeight: 700 }}>Wesprzyj</Link>
         </div>
         <div className="navbar__actions">
           <Link className="navbar__platform-label" to="/cennik">Platforma</Link>
@@ -79,6 +80,7 @@ function Navbar() {
           <a href={sectionHref('jak-to-dziala')} onClick={closeMenu}>Jak to działa</a>
           <Link to="/cennik" onClick={closeMenu}>Cennik</Link>
           <a href={sectionHref('opinie')} onClick={closeMenu}>Opinie</a>
+          <Link to="/wip" onClick={closeMenu} style={{ color: 'var(--blue-light)' }}>Wesprzyj</Link>
         </nav>
       </div>
 
@@ -111,12 +113,12 @@ function Hero() {
             Ucz się we własnym tempie i sprawdzaj postępy na bieżąco.
           </p>
           <div className="hero__actions animate-fade-up delay-3">
-            <button id="hero-cta-start" className="btn btn-primary">
+            <a href="#cennik" id="hero-cta-start" className="btn btn-primary" style={{ textDecoration: 'none' }}>
               Zacznij za darmo →
-            </button>
-            <button id="hero-cta-preview" className="btn btn-secondary">
+            </a>
+            <Link to="/kursy" id="hero-cta-preview" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
               Podgląd kursu
-            </button>
+            </Link>
           </div>
           <div className="hero__stats animate-fade-up delay-4">
             <div>
@@ -364,10 +366,10 @@ function Bento() {
 
 /* ── How it works ──────────────────────────────────────────── */
 const steps = [
-  { icon: '🔍', title: 'Zrób test poziomujący', text: 'Krótki test na starcie wskaże Twoje mocne strony i luki — bez oceniania, tylko po to, by uczyć się efektywniej.' },
-  { icon: '📚', title: 'Oglądaj lekcje', text: 'Krótkie, konkretne lekcje wideo z podziałem na działy. Możesz wracać do nich w dowolnym momencie.' },
-  { icon: '✏️', title: 'Rozwiązuj zadania', text: 'Tysiące zadań z pełnymi rozwiązaniami i wskazówkami. System wskazuje, co powtórzyć, jeśli popełnisz błąd.' },
-  { icon: '🏆', title: 'Wejdź na maturę pewny', text: 'Symuluj prawdziwy egzamin na arkuszach CKE. Sprawdzaj, czy osiągnąłeś cel, zanim wejdziesz do sali.' },
+  { icon: '🚀', title: 'Włącz kurs', text: 'Wybierz dowolny materiał na platformie i zacznij przygotowania natychmiast. Wszystko jest w 100% darmowe i nie wymaga nawet zakładania konta!' },
+  { icon: '📚', title: 'Oglądaj lekcje ZA DARMO', text: 'Krótkie, konkretne lekcje wideo z podziałem na działy. Choć konto nie jest wymagane, po bezpłatnej rejestracji zapisujesz swoje postępy (a z Premium oglądasz bez reklam).' },
+  { icon: '✏️', title: 'Rozwiązuj zadania', text: 'Przerabiaj tysiące darmowych zadań z pełnymi rozwiązaniami. Posiadacze konta Premium zyskują tu dodatkowo dostęp do innowacyjnego generatora próbnych matur.' },
+  { icon: '🏆', title: 'Dostań świetny wynik z matury', text: 'Dzięki naszym darmowym materiałom zyskujesz pełną wiedzę. Symuluj prawdziwy egzamin na arkuszach i wejdź na salę bez żadnego stresu.' },
 ]
 
 function HowItWorks() {
@@ -671,6 +673,21 @@ export default function App() {
           <>
             <Navbar />
             <CoursePlayer />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/wip"
+        element={
+          <>
+            <Navbar />
+            <div style={{ paddingTop: '150px', paddingBottom: '100px', textAlign: 'center', minHeight: '80vh', background: 'var(--surface-alt)' }}>
+              <div className="container">
+                <h1 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '24px' }}>Work In Progress 🛠️</h1>
+                <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>Ta strona jest w budowie. Wkrótce dodamy tutaj link do zbiórki,<br/>gdzie będziesz mógł wesprzeć rozwój ScoreLab!</p>
+              </div>
+            </div>
             <Footer />
           </>
         }

@@ -83,6 +83,40 @@
   opacity: 1;
 }
 
+/* WIP modifier */
+.course-card--wip {
+  cursor: not-allowed;
+  position: relative;
+}
+
+.course-card--wip:hover {
+  transform: none;
+  box-shadow: var(--shadow-sm);
+  border-color: var(--border);
+}
+
+.course-card__wip-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 10;
+  padding: var(--space-4);
+  pointer-events: none;
+}
+
+.course-card__wip-badge {
+  background: var(--black);
+  color: var(--white);
+  padding: var(--space-2) var(--space-4);
+  border-radius: var(--radius-full);
+  font-size: var(--text-xs);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  border: 1px solid rgba(255,255,255,0.1);
+}
+
 .course-card__content {
   padding: var(--space-5);
   display: flex;
