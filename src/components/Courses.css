@@ -403,3 +403,45 @@
 .lesson-icon { font-size: 12px; width: 16px; text-align: center; }
 .lesson-title { flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lesson-time { font-size: 11px; font-weight: 500; }
+
+/* ── Course Player Resources ─────────────────────────────────── */
+.resource-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.resource-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  background: var(--surface-alt);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  transition: border-color 0.2s, background 0.2s;
+}
+
+.resource-item.cursor-pointer:hover {
+  border-color: rgba(155,202,242,0.4);
+  background: var(--white);
+}
+
+.resource-item .icon {
+  font-size: 24px;
+}
+
+.resource-item .resource-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.resource-item h4 {
+  font-size: var(--text-base);
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.resource-item .text-muted {
+  color: var(--text-secondary);
+}
