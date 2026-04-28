@@ -5,6 +5,7 @@ import './App.css'
 import Pricing from './components/Pricing'
 import Courses from './components/Courses'
 import CoursePlayer from './components/CoursePlayer'
+import HowItWorksPage from './components/HowItWorksPage'
 import logoFull from './assets/Extended_ScoreLab.png'
 import logoSmall from './assets/ScoreLabSmall.png'
 
@@ -37,7 +38,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className={`navbar${scrolled ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
+      <nav className={`navbar${(scrolled || !isHomePage) ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
         <div
           className="navbar__logo"
           role="button"
@@ -56,7 +57,7 @@ function Navbar() {
         </div>
         <div className="navbar__nav">
           <Link to="/kursy">Kursy</Link>
-          <a href={sectionHref('jak-to-dziala')}>Jak to działa</a>
+          <Link to="/jak-to-dziala">Jak to działa</Link>
           <a href={sectionHref('opinie')}>Opinie</a>
           <Link to="/wip" className="navbar__support-link" style={{ color: 'var(--blue-light)', fontWeight: 700 }}>Wesprzyj</Link>
         </div>
@@ -77,7 +78,7 @@ function Navbar() {
       <div className={`mobile-menu${menuOpen ? ' mobile-menu--open' : ''}`} aria-hidden={!menuOpen}>
         <nav className="mobile-menu__nav">
           <Link to="/kursy" onClick={closeMenu}>Kursy</Link>
-          <a href={sectionHref('jak-to-dziala')} onClick={closeMenu}>Jak to działa</a>
+          <Link to="/jak-to-dziala" onClick={closeMenu}>Jak to działa</Link>
           <Link to="/cennik" onClick={closeMenu}>Cennik</Link>
           <a href={sectionHref('opinie')} onClick={closeMenu}>Opinie</a>
           <Link to="/wip" onClick={closeMenu} style={{ color: 'var(--blue-light)' }}>Wesprzyj</Link>
@@ -364,36 +365,6 @@ function Bento() {
   )
 }
 
-/* ── How it works ──────────────────────────────────────────── */
-const steps = [
-  { icon: '🚀', title: 'Włącz kurs', text: 'Wybierz dowolny materiał na platformie i zacznij przygotowania natychmiast. Wszystko jest w 100% darmowe i nie wymaga nawet zakładania konta!' },
-  { icon: '📚', title: 'Oglądaj lekcje ZA DARMO', text: 'Krótkie, konkretne lekcje wideo z podziałem na działy. Choć konto nie jest wymagane, po bezpłatnej rejestracji zapisujesz swoje postępy (a z Premium oglądasz bez reklam).' },
-  { icon: '✏️', title: 'Rozwiązuj zadania', text: 'Przerabiaj tysiące darmowych zadań z pełnymi rozwiązaniami. Posiadacze konta Premium zyskują tu dodatkowo dostęp do innowacyjnego generatora próbnych matur.' },
-  { icon: '🏆', title: 'Dostań świetny wynik z matury', text: 'Dzięki naszym darmowym materiałom zyskujesz pełną wiedzę. Symuluj prawdziwy egzamin na arkuszach i wejdź na salę bez żadnego stresu.' },
-]
-
-function HowItWorks() {
-  return (
-    <section className="how-it-works" id="jak-to-dziala">
-      <div className="container">
-        <div className="section-label">Proces</div>
-        <h2 className="section-title">Od zera do matury<br />w 4 krokach</h2>
-        <p className="section-subtitle">Prosty system, który przeprowadzi Cię przez cały materiał — bez zbędnego stresu.</p>
-        <div className="steps__grid">
-          {steps.map((step, i) => (
-            <div key={step.title} className="step-card">
-              <div className="step-card__number">0{i + 1}</div>
-              <div className="step-card__icon">{step.icon}</div>
-              <h3 className="step-card__title">{step.title}</h3>
-              <p className="step-card__text">{step.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /* ── Testimonials ──────────────────────────────────────────── */
 const testimonials = [
   {
@@ -639,7 +610,6 @@ export default function App() {
             <Hero />
             <Features />
             <Bento />
-            <HowItWorks />
             <Testimonials />
             <FAQ />
             <CTABanner />
@@ -688,6 +658,16 @@ export default function App() {
                 <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>Ta strona jest w budowie. Wkrótce dodamy tutaj link do zbiórki,<br/>gdzie będziesz mógł wesprzeć rozwój ScoreLab!</p>
               </div>
             </div>
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/jak-to-dziala"
+        element={
+          <>
+            <Navbar />
+            <HowItWorksPage />
             <Footer />
           </>
         }
