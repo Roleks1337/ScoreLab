@@ -67,7 +67,6 @@ function Pricing() {
     }
   };
 
-
   return (
     <>
       <section className="pricing" id="cennik">
