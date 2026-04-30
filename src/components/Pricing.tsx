@@ -67,9 +67,6 @@ function Pricing() {
     }
   };
 
-  const switchMode = () => {
-    setModalMode(prev => prev === 'register' ? 'login' : 'register');
-  };
 
   return (
     <>

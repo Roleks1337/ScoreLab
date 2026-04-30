@@ -1,4 +1,4 @@
-/* ── Navbar ──────────────────────────────────────────────────── */
+﻿/* - Navbar - */
 .navbar {
   position: fixed;
   top: 0;
@@ -115,7 +115,7 @@
 }
 
 .navbar__platform-label::after {
-  content: '→';
+  content: '-';
   font-size: 1.05em;
   font-weight: 700;
   transform: translateX(0);
@@ -138,7 +138,7 @@
   transform: translateX(2px);
 }
 
-/* ── Hero ────────────────────────────────────────────────────── */
+/* - Hero - */
 .hero {
   min-height: 100vh;
   display: flex;
@@ -354,7 +354,7 @@
   font-weight: 500;
 }
 
-/* ── Section base ────────────────────────────────────────────── */
+/* - Section base - */
 section {
   padding: var(--space-24) 0;
 }
@@ -391,7 +391,7 @@ section {
   max-width: 560px;
 }
 
-/* ── Features Showcase ───────────────────────────────────────── */
+/* - Features Showcase - */
 .features-showcase {
   background: var(--surface-alt);
   padding: var(--space-24) 0;
@@ -588,7 +588,7 @@ section {
   }
 }
 
-/* ── Bento hero ──────────────────────────────────────────────── */
+/* - Bento hero - */
 .bento {
   background: var(--surface);
 }
@@ -780,7 +780,7 @@ section {
   margin-top: var(--space-2);
 }
 
-/* ── How it works ────────────────────────────────────────────── */
+/* - How it works - */
 .how-it-works {
   background: var(--black);
   color: var(--white);
@@ -853,7 +853,7 @@ section {
   line-height: 1.6;
 }
 
-/* ── Pricing ─────────────────────────────────────────────────── */
+/* - Pricing - */
 .pricing {
   background: var(--surface-alt);
 }
@@ -1014,7 +1014,7 @@ section {
   justify-content: center;
 }
 
-/* ── Testimonials ────────────────────────────────────────────── */
+/* - Testimonials - */
 .testimonials {
   background: var(--surface);
   overflow: hidden;
@@ -1128,7 +1128,7 @@ section {
   color: var(--text-muted);
 }
 
-/* ── CTA Banner ──────────────────────────────────────────────── */
+/* - CTA Banner - */
 .cta-banner {
   background: var(--black);
   padding: var(--space-32) 0;
@@ -1177,7 +1177,7 @@ section {
   z-index: 1;
 }
 
-/* ── Footer ──────────────────────────────────────────────────── */
+/* - Footer - */
 .footer {
   background: var(--black);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -1246,7 +1246,7 @@ section {
   color: rgba(255, 255, 255, 0.25);
 }
 
-/* ── FAQ ─────────────────────────────────────────────────────── */
+/* - FAQ - */
 .faq {
   background: var(--surface-alt);
 }
@@ -1324,7 +1324,7 @@ section {
   line-height: 1.6;
 }
 
-/* ── Responsive ──────────────────────────────────────────────── */
+/* - Responsive - */
 @media (max-width: 1024px) {
 
   .steps__grid {
@@ -1337,10 +1337,10 @@ section {
   }
 }
 
-/* ── Tablet narrow: 770px – 870px ────────────────────────────── */
+/* - Tablet narrow: 770px - 870px - */
 @media (max-width: 870px) {
 
-  /* Navbar – prevent platform label from being clipped */
+  /* Navbar - prevent platform label from being clipped */
   .navbar {
     padding: 0 var(--space-4);
   }
@@ -1425,7 +1425,7 @@ section {
   }
 }
 
-/* ── Mobile hamburger menu ───────────────────────────────────── */
+/* - Mobile hamburger menu - */
 .hamburger {
   display: none;
   flex-direction: column;
@@ -1449,7 +1449,7 @@ section {
   transform-origin: center;
 }
 
-/* Animate hamburger → X */
+/* Animate hamburger - X */
 .hamburger--open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
@@ -1513,7 +1513,7 @@ section {
   }
 }
 
-/* ── Mobile drawer ───────────────────────────────────────────── */
+/* - Mobile drawer - */
 .mobile-menu {
   position: fixed;
   top: 72px;
@@ -1581,7 +1581,7 @@ section {
   }
 }
 
-/* ── Auth Modal ──────────────────────────────────────────────── */
+/* - Auth Modal - */
 .auth-modal-overlay {
   position: fixed;
   inset: 0;
@@ -1696,7 +1696,7 @@ section {
 .auth-modal__switch:hover {
   text-decoration: underline;
 }
-/* �� Added Styles for Auth & User �������������������������� */
+/* - Added Styles for Auth & User - */
 .navbar__user-menu {
   display: flex;
   align-items: center;
@@ -1732,7 +1732,7 @@ section {
 }
 
 
-/* �� User Dropdown & Avatar ������������������������������ */
+/* - User Dropdown & Avatar - */
 .navbar__user-container {
   position: relative;
 }
@@ -1841,7 +1841,7 @@ section {
 }
 
 
-/* �� Featured Dropdown Item ������������������������������ */
+/* - Featured Dropdown Item - */
 .user-dropdown__item--featured {
   background: linear-gradient(135deg, #1d1d1d 0%, #0a0a0a 100%) !important;
   color: white !important;
@@ -1859,4 +1859,5 @@ section {
 .user-dropdown__item--featured .user-dropdown__icon {
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
 }
+
 
