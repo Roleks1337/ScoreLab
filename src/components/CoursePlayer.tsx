@@ -280,7 +280,7 @@ export default function CoursePlayer() {
             </div>
             
             <div className="playlist-modules">
-              {modules.map((mod, index) => {
+              {modules.map((mod) => {
                 const isOpen = expandedModules.includes(mod.id);
                 return (
                   <div key={mod.id} className={`module ${isOpen ? 'open' : ''}`}>

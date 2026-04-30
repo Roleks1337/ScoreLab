@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import AuthModal from './Register';
 
 /* ── Pricing ───────────────────────────────────────────────── */
 const plans = [
@@ -113,49 +114,11 @@ function Pricing() {
       </div>
       </section>
 
-      {isModalOpen && (
-        <div className="auth-modal-overlay" onClick={() => setIsModalOpen(false)}>
-          <div className="auth-modal" onClick={e => e.stopPropagation()}>
-            <button className="auth-modal__close" onClick={() => setIsModalOpen(false)}>✕</button>
-            <h3 className="auth-modal__title">
-              {modalMode === 'register' ? 'Załóż darmowe konto' : 'Zaloguj się'}
-            </h3>
-            <p className="auth-modal__subtitle">
-              {modalMode === 'register' ? 'Zyskaj dostęp do śledzenia postępów i statystyk.' : 'Witaj ponownie!'}
-            </p>
-            <form className="auth-modal__form" onSubmit={(e) => { e.preventDefault(); navigate('/kursy'); }}>
-              {modalMode === 'register' && (
-                <div className="form-group">
-                  <label>Imię</label>
-                  <input type="text" placeholder="Twoje imię" required />
-                </div>
-              )}
-              <div className="form-group">
-                <label>Email</label>
-                <input type="email" placeholder="adres@email.com" required />
-              </div>
-              <div className="form-group">
-                <label>Hasło</label>
-                <input type="password" placeholder="••••••••" required />
-              </div>
-              <button type="submit" className="btn btn-primary auth-modal__submit">
-                {modalMode === 'register' ? 'Zarejestruj się' : 'Zaloguj się'}
-              </button>
-            </form>
-            <div className="auth-modal__footer">
-              {modalMode === 'register' ? (
-                <>
-                  Masz już konto? <span className="auth-modal__switch" onClick={switchMode}>Zaloguj się</span>
-                </>
-              ) : (
-                <>
-                  Nie masz jeszcze konta? <span className="auth-modal__switch" onClick={switchMode}>Zarejestruj się</span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      )}
+      <AuthModal 
+        isOpen={isModalOpen} 
+        onClose={() => setIsModalOpen(false)} 
+        initialMode={modalMode} 
+      />
     </>
   )
 }

@@ -4,10 +4,10 @@ import './HowItWorksPage.css'; // Dodamy nowe style tutaj
 
 /* ── How it works (przeniesione z App.tsx) ───────────────────────── */
 const steps = [
-  { icon: '🚀', title: 'Włącz kurs', text: 'Wybierz dowolny materiał na platformie i zacznij przygotowania natychmiast. Wszystko jest w 100% darmowe i nie wymaga nawet zakładania konta!' },
-  { icon: '📚', title: 'Oglądaj lekcje ZA DARMO', text: 'Krótkie, konkretne lekcje wideo z podziałem na działy. Choć konto nie jest wymagane, po bezpłatnej rejestracji zapisujesz swoje postępy (a z Premium oglądasz bez reklam).' },
-  { icon: '✏️', title: 'Rozwiązuj zadania', text: 'Przerabiaj tysiące darmowych zadań z pełnymi rozwiązaniami. Posiadacze konta Premium zyskują tu dodatkowo dostęp do innowacyjnego generatora próbnych matur.' },
-  { icon: '🏆', title: 'Dostań świetny wynik z matury', text: 'Dzięki naszym darmowym materiałom zyskujesz pełną wiedzę. Symuluj prawdziwy egzamin na arkuszach i wejdź na salę bez żadnego stresu.' },
+  { icon: '🚀', title: 'Włącz kurs', text: 'Wybierz dowolny materiał na platformie i zacznij przygotowania natychmiast. Wszystko jest w 100% darmowe i nie wymaga nawet zakładania konta!', color: 'var(--blue-light)' },
+  { icon: '📚', title: 'Oglądaj lekcje ZA DARMO', text: 'Krótkie, konkretne lekcje wideo z podziałem na działy. Choć konto nie jest wymagane, po bezpłatnej rejestracji zapisujesz swoje postępy (a z Premium oglądasz bez reklam).', color: '#FFBFA2' },
+  { icon: '✏️', title: 'Rozwiązuj zadania', text: 'Przerabiaj tysiące darmowych zadań z pełnymi rozwiązaniami. Posiadacze konta Premium zyskują tu dodatkowo dostęp do innowacyjnego generatora próbnych matur.', color: '#95E2B4' },
+  { icon: '🏆', title: 'Dostań świetny wynik z matury', text: 'Dzięki naszym darmowym materiałom zyskujesz pełną wiedzę. Symuluj prawdziwy egzamin na arkuszach i wejdź na salę bez żadnego stresu.', color: 'var(--blue-pale)' },
 ]
 
 function HowItWorks() {
@@ -19,9 +19,9 @@ function HowItWorks() {
         <p className="section-subtitle">Prosty system, który przeprowadzi Cię przez cały materiał — bez zbędnego stresu.</p>
         <div className="steps__grid">
           {steps.map((step, i) => (
-            <div key={step.title} className="step-card">
+            <div key={step.title} className="step-card" style={{ '--accent-color': step.color } as any}>
               <div className="step-card__number">0{i + 1}</div>
-              <div className="step-card__icon">{step.icon}</div>
+              <div className="step-card__icon" style={{ background: `rgba(${step.color.startsWith('var') ? '155, 202, 242' : '255, 255, 255'}, 0.1)` }}>{step.icon}</div>
               <h3 className="step-card__title">{step.title}</h3>
               <p className="step-card__text">{step.text}</p>
             </div>

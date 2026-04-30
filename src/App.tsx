@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { supabase } from './lib/supabase'
+import AuthModal from './components/Register'
 import './index.css'
 import './App.css'
 import Pricing from './components/Pricing'
@@ -8,16 +10,24 @@ import CoursePlayer from './components/CoursePlayer'
 import HowItWorksPage from './components/HowItWorksPage'
 import logoFull from './assets/Extended_ScoreLab.png'
 import logoSmall from './assets/ScoreLabSmall.png'
+import Settings from './components/Settings'
 
 /* ── Navbar ────────────────────────────────────────────────── */
-function Navbar() {
+function Navbar({ user }: { user: any }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
   const isHomePage = location.pathname === '/'
   const sectionHref = (sectionId: string) => (isHomePage ? `#${sectionId}` : `/#${sectionId}`)
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setIsUserMenuOpen(false)
+    navigate('/')
+  }
 
   const handleLogoClick = () => {
     navigate('/')
@@ -62,7 +72,52 @@ function Navbar() {
           <Link to="/wip" className="navbar__support-link" style={{ color: 'var(--blue-light)', fontWeight: 700 }}>Wesprzyj</Link>
         </div>
         <div className="navbar__actions">
-          <Link className="navbar__platform-label" to="/cennik">Platforma</Link>
+          {user ? (
+            <div className="navbar__user-container">
+              <div 
+                className="navbar__avatar" 
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                title={user.user_metadata?.full_name || user.email}
+              >
+                {user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+              </div>
+              
+              {isUserMenuOpen && (
+                <>
+                  <div className="user-menu-overlay" onClick={() => setIsUserMenuOpen(false)} />
+                  <div className="user-dropdown">
+                    <div className="user-dropdown__header">
+                      <div className="user-dropdown__name">{user.user_metadata?.full_name || 'Użytkownik'}</div>
+                      <div className="user-dropdown__email">{user.email}</div>
+                    </div>
+                    
+                    <div className="user-dropdown__divider" />
+                    
+                    <Link to="/cennik" className="user-dropdown__item user-dropdown__item--featured" onClick={() => setIsUserMenuOpen(false)}>
+                      <span className="user-dropdown__icon">🚀</span> Panel Platformy
+                    </Link>
+
+                    <div className="user-dropdown__divider" />
+                    
+                    <Link to="/statystyki" className="user-dropdown__item" onClick={() => setIsUserMenuOpen(false)}>
+                      <span className="user-dropdown__icon">📊</span> Statystyki
+                    </Link>
+                    <Link to="/ustawienia" className="user-dropdown__item" onClick={() => setIsUserMenuOpen(false)}>
+                      <span className="user-dropdown__icon">⚙️</span> Customizuj konto
+                    </Link>
+                    
+                    <div className="user-dropdown__divider" />
+                    
+                    <button className="user-dropdown__item user-dropdown__item--logout" onClick={handleLogout}>
+                      <span className="user-dropdown__icon">🚪</span> Wyloguj się
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <Link className="navbar__platform-label" to="/cennik">Platforma</Link>
+          )}
         </div>
         <button
           className={`hamburger${menuOpen ? ' hamburger--open' : ''}`}
@@ -600,13 +655,29 @@ function Footer() {
 
 /* ── App ───────────────────────────────────────────────────── */
 export default function App() {
+  const [user, setUser] = useState<any>(null)
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <Routes>
       <Route
         path="/"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} />
             <Hero />
             <Features />
             <Bento />
@@ -621,7 +692,7 @@ export default function App() {
         path="/cennik"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} />
             <Pricing />
             <Footer />
           </>
@@ -631,7 +702,7 @@ export default function App() {
         path="/kursy"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} />
             <Courses />
             <Footer />
           </>
@@ -641,7 +712,7 @@ export default function App() {
         path="/kursy/:courseId"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} />
             <CoursePlayer />
             <Footer />
           </>
@@ -651,7 +722,7 @@ export default function App() {
         path="/wip"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} />
             <div style={{ paddingTop: '150px', paddingBottom: '100px', textAlign: 'center', minHeight: '80vh', background: 'var(--surface-alt)' }}>
               <div className="container">
                 <h1 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '24px' }}>Work In Progress 🛠️</h1>
@@ -666,11 +737,15 @@ export default function App() {
         path="/jak-to-dziala"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} />
             <HowItWorksPage />
             <Footer />
           </>
         }
+      />
+      <Route
+        path="/ustawienia"
+        element={<Settings />}
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
