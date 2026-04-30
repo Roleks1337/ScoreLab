@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
-import AuthModal from './components/Register'
 import './index.css'
 import './App.css'
 import Pricing from './components/Pricing'
