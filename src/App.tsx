@@ -10,9 +10,10 @@ import HowItWorksPage from './components/HowItWorksPage'
 import logoFull from './assets/Extended_ScoreLab.png'
 import logoSmall from './assets/ScoreLabSmall.png'
 import Settings from './components/Settings'
+import Statistics from './components/Statistics'
 
 /* ── Navbar ────────────────────────────────────────────────── */
-function Navbar({ user }: { user: any }) {
+function Navbar({ user, isSettingsPage }: { user: any, isSettingsPage?: boolean }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -47,7 +48,7 @@ function Navbar({ user }: { user: any }) {
 
   return (
     <>
-      <nav className={`navbar${(scrolled || !isHomePage) ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
+      <nav className={`navbar${(scrolled || !isHomePage) ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}${isSettingsPage ? ' navbar--settings' : ''}`}>
         <div
           className="navbar__logo"
           role="button"
@@ -64,12 +65,16 @@ function Navbar({ user }: { user: any }) {
           <img className="logo--full" src={logoFull} alt="ScoreLab" />
           <img className="logo--small" src={logoSmall} alt="ScoreLab" />
         </div>
-        <div className="navbar__nav">
-          <Link to="/kursy">Kursy</Link>
-          <Link to="/jak-to-dziala">Jak to działa</Link>
-          <a href={sectionHref('opinie')}>Opinie</a>
-          <Link to="/wip" className="navbar__support-link" style={{ color: 'var(--blue-light)', fontWeight: 700 }}>Wesprzyj</Link>
-        </div>
+        
+        {!isSettingsPage && (
+          <div className="navbar__nav">
+            <Link to="/kursy">Kursy</Link>
+            <Link to="/jak-to-dziala">Jak to działa</Link>
+            <a href={sectionHref('opinie')}>Opinie</a>
+            <Link to="/wip" className="navbar__support-link" style={{ color: 'var(--blue-light)', fontWeight: 700 }}>Wesprzyj</Link>
+          </div>
+        )}
+
         <div className="navbar__actions">
           {user ? (
             <div className="navbar__user-container">
@@ -131,11 +136,28 @@ function Navbar({ user }: { user: any }) {
       {/* Mobile drawer */}
       <div className={`mobile-menu${menuOpen ? ' mobile-menu--open' : ''}`} aria-hidden={!menuOpen}>
         <nav className="mobile-menu__nav">
-          <Link to="/kursy" onClick={closeMenu}>Kursy</Link>
-          <Link to="/jak-to-dziala" onClick={closeMenu}>Jak to działa</Link>
-          <Link to="/cennik" onClick={closeMenu}>Cennik</Link>
-          <a href={sectionHref('opinie')} onClick={closeMenu}>Opinie</a>
-          <Link to="/wip" onClick={closeMenu} style={{ color: 'var(--blue-light)' }}>Wesprzyj</Link>
+          {isSettingsPage ? (
+            <>
+              <Link to="/" onClick={closeMenu} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--blue-light)', fontWeight: 700, fontSize: '15px' }}>
+                <span>←</span> Wróć do strony głównej
+              </Link>
+              <div className="mobile-menu__header">Ustawienia użytkownika</div>
+              <Link to="/ustawienia?tab=account" onClick={closeMenu}>Moje konto</Link>
+              <Link to="/ustawienia?tab=premium" onClick={closeMenu}>Premium</Link>
+              <Link to="/ustawienia?tab=privacy" onClick={closeMenu}>Prywatność i bezpieczeństwo</Link>
+              <div className="mobile-menu__header" style={{ marginTop: '20px' }}>Ustawienia aplikacji</div>
+              <Link to="/ustawienia?tab=appearance" onClick={closeMenu}>Wygląd</Link>
+              <Link to="/ustawienia?tab=notifications" onClick={closeMenu}>Powiadomienia</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/kursy" onClick={closeMenu}>Kursy</Link>
+              <Link to="/jak-to-dziala" onClick={closeMenu}>Jak to działa</Link>
+              <Link to="/cennik" onClick={closeMenu}>Cennik</Link>
+              <a href={sectionHref('opinie')} onClick={closeMenu}>Opinie</a>
+              <Link to="/wip" onClick={closeMenu} style={{ color: 'var(--blue-light)' }}>Wesprzyj</Link>
+            </>
+          )}
         </nav>
       </div>
 
@@ -146,7 +168,7 @@ function Navbar({ user }: { user: any }) {
 }
 
 /* ── Hero ──────────────────────────────────────────────────── */
-function Hero() {
+function Hero({ user }: { user: any }) {
   return (
     <section className="hero" id="hero">
       <div className="hero__bg-blob hero__bg-blob--1" />
@@ -168,9 +190,15 @@ function Hero() {
             Ucz się we własnym tempie i sprawdzaj postępy na bieżąco.
           </p>
           <div className="hero__actions animate-fade-up delay-3">
-            <a href="#cennik" id="hero-cta-start" className="btn btn-primary" style={{ textDecoration: 'none' }}>
-              Zacznij za darmo →
-            </a>
+            {user ? (
+              <Link to="/kursy" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+                Przejdź do kursów →
+              </Link>
+            ) : (
+              <a href="#cennik" id="hero-cta-start" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+                Zacznij za darmo →
+              </a>
+            )}
             <Link to="/kursy" id="hero-cta-preview" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
               Podgląd kursu
             </Link>
@@ -586,15 +614,25 @@ function FAQ() {
 }
 
 /* ── CTA Banner ────────────────────────────────────────────── */
-function CTABanner() {
+function CTABanner({ user }: { user: any }) {
   return (
     <section className="cta-banner">
       <div className="container">
-        <h2 className="cta-banner__title">Gotowy na 100%<br />z matmy?</h2>
-        <p className="cta-banner__subtitle">Dołącz do ponad 2 400 uczniów. Pierwsze 7 dni za darmo — bez karty kredytowej.</p>
+        <h2 className="cta-banner__title">
+          {user ? 'Kontynuuj swoją naukę' : 'Gotowy na 100% z matmy?'}
+        </h2>
+        <p className="cta-banner__subtitle">
+          {user ? 'Twoje postępy czekają. Wróć do lekcji i szlifuj swoje umiejętności.' : 'Dołącz do ponad 2 400 uczniów. Pierwsze 7 dni za darmo — bez karty kredytowej.'}
+        </p>
         <div className="cta-banner__actions">
-          <button id="cta-start-free" className="btn btn-blue">Zacznij za darmo →</button>
-          <button id="cta-view-plans" className="btn btn-secondary">Przeglądaj plany</button>
+          {user ? (
+            <Link to="/kursy" className="btn btn-blue" style={{ textDecoration: 'none' }}>Przejdź do kursów →</Link>
+          ) : (
+            <>
+              <Link to="/cennik" id="cta-start-free" className="btn btn-blue" style={{ textDecoration: 'none' }}>Zacznij za darmo →</Link>
+              <Link to="/cennik" id="cta-view-plans" className="btn btn-secondary" style={{ textDecoration: 'none' }}>Przeglądaj plany</Link>
+            </>
+          )}
         </div>
       </div>
     </section>
@@ -677,12 +715,12 @@ export default function App() {
         element={
           <>
             <Navbar user={user} />
-            <Hero />
+            <Hero user={user} />
             <Features />
             <Bento />
             <Testimonials />
             <FAQ />
-            <CTABanner />
+            <CTABanner user={user} />
             <Footer />
           </>
         }
@@ -692,7 +730,7 @@ export default function App() {
         element={
           <>
             <Navbar user={user} />
-            <Pricing />
+            <Pricing user={user} />
             <Footer />
           </>
         }
@@ -743,8 +781,23 @@ export default function App() {
         }
       />
       <Route
+        path="/statystyki"
+        element={
+          <>
+            <Navbar user={user} />
+            <Statistics />
+            <Footer />
+          </>
+        }
+      />
+      <Route
         path="/ustawienia"
-        element={<Settings />}
+        element={
+          <>
+            <Navbar user={user} isSettingsPage={true} />
+            <Settings />
+          </>
+        }
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

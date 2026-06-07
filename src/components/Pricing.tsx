@@ -53,7 +53,7 @@ const plans = [
   },
 ]
 
-function Pricing() {
+function Pricing({ user }: { user: any }) {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'register' | 'login'>('register');
@@ -61,9 +61,23 @@ function Pricing() {
   const handleCtaClick = (planName: string) => {
     if (planName === 'Bez logowania') {
       navigate('/kursy');
+    } else if (planName === 'Zalogowana') {
+      if (user) {
+        navigate('/kursy');
+      } else {
+        setModalMode('register');
+        setIsModalOpen(true);
+      }
     } else {
-      setModalMode('register');
-      setIsModalOpen(true);
+      // Premium
+      if (user) {
+        // Here we could redirect to a payment page or similar
+        // For now, let's just go to kursy or show a message
+        navigate('/wip');
+      } else {
+        setModalMode('register');
+        setIsModalOpen(true);
+      }
     }
   };
 
@@ -97,13 +111,15 @@ function Pricing() {
                 ))}
               </ul>
               <div className="pricing-card__cta">
-                <button 
-                  id={`pricing-btn-${plan.name.toLowerCase()}`} 
-                  className={`btn ${plan.ctaClass}`}
-                  onClick={() => handleCtaClick(plan.name)}
-                >
-                  {plan.cta}
-                </button>
+                  <button 
+                    id={`pricing-btn-${plan.name.toLowerCase()}`} 
+                    className={`btn ${plan.ctaClass}`}
+                    onClick={() => handleCtaClick(plan.name)}
+                  >
+                    {plan.name === 'Zalogowana' && user 
+                      ? 'Twój obecny plan' 
+                      : (plan.name === 'Bez logowania' && user ? 'Przejdź do kursów' : plan.cta)}
+                  </button>
               </div>
             </div>
           ))}

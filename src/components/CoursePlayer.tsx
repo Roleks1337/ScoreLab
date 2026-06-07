@@ -12,6 +12,7 @@ type Lesson = {
   completed: boolean;
   type: 'video' | 'quiz';
   description: string;
+  videoUrl?: string;
   tasks: Task[];
   pdfs: Pdf[];
 };
@@ -35,6 +36,7 @@ const courseDataMap: Record<string, Module[]> = {
           completed: true,
           type: 'video',
           description: 'Wprowadzenie do podstawowych zagadnień. W tej lekcji dowiesz się najważniejszych rzeczy o danym temacie.',
+          videoUrl: '/videos/sample.mp4',
           tasks: [
             { id: 't1', title: 'Zadanie 1. Oblicz pole powierzchni...', type: 'pdf' }
           ],
@@ -50,6 +52,7 @@ const courseDataMap: Record<string, Module[]> = {
           completed: false,
           type: 'video',
           description: 'Rozwiązujemy wspólnie pierwsze zadania. Zobaczysz jak zastosować teorię w praktyce.',
+          videoUrl: '/videos/sample2.mp4',
           tasks: [
             { id: 't2', title: 'Zadanie 1. Rozwiąż równanie kwadratowe', type: 'interactive' },
             { id: 't3', title: 'Zadanie 2. Wyznacz dziedzinę funkcji', type: 'interactive' },
@@ -68,6 +71,7 @@ const courseDataMap: Record<string, Module[]> = {
           completed: false,
           type: 'quiz',
           description: 'Czas na samodzielną pracę. Sprawdź swoją wiedzę z tego modułu.',
+          videoUrl: '/videos/sample.mp4',
           tasks: [
             { id: 't5', title: 'Test 10 pytań', type: 'interactive' },
             { id: 't6', title: 'Test trudny 15 pytań', type: 'interactive', premium: true }
@@ -88,6 +92,7 @@ const courseDataMap: Record<string, Module[]> = {
           completed: false,
           type: 'video',
           description: 'Zagłębiamy się w bardziej zaawansowane tematy na poziomie rozszerzonym.',
+          videoUrl: '/videos/sample.mp4',
           tasks: [
             { id: 't7', title: 'Karta pracy (Trudne przypadki)', type: 'pdf', premium: true }
           ],
@@ -111,6 +116,7 @@ const courseDataMap: Record<string, Module[]> = {
           completed: true,
           type: 'video',
           description: 'Omówienie zasad pisania wypracowania maturalnego. Zobaczysz, jak postawić trafną tezę i dobrze argumentować.',
+          videoUrl: '/videos/sample.mp4',
           tasks: [
             { id: 'pl_t1', title: 'Napisz próbny wstęp do rozprawki', type: 'interactive' },
             { id: 'pl_t2', title: 'Analiza błędnych argumentów', type: 'interactive', premium: true }
@@ -128,8 +134,9 @@ const courseDataMap: Record<string, Module[]> = {
           completed: false,
           type: 'video',
           description: 'Przegląd najważniejszych motywów z "Lalki" B. Prusa, idealnych do użycia w wypracowaniu.',
+          videoUrl: '/videos/sample2.mp4',
           tasks: [
-            { id: 'pl_t3', title: 'Przyporządkuj motyw do bohatera', type: 'interactive' }
+            { id: 'pl_t3', title: 'Przyporządkuj motyw do bohaterów', type: 'interactive' }
           ],
           pdfs: [
             { id: 'pl_p3', title: 'Streszczenie szczegółowe "Lalki"', size: '2.1 MB', premium: true }
@@ -146,6 +153,7 @@ export default function CoursePlayer() {
   const [expandedModules, setExpandedModules] = useState<string[]>(['m1']);
   const [activeLessonId, setActiveLessonId] = useState<string>('l2');
   const [activeTab, setActiveTab] = useState<'opis' | 'zadania' | 'pdf'>('opis');
+  const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const courseName = courseId === 'matematyka' ? 'Matematyka podstawowa' :
                      courseId === 'jezyk-polski' ? 'Język polski podstawowy' : 
@@ -178,6 +186,7 @@ export default function CoursePlayer() {
     if (!lesson.locked) {
       setActiveLessonId(lesson.id);
       setActiveTab('opis'); // Reset tab on lesson change
+      setIsPlaying(false);  // Reset playing state on lesson change
     }
   };
 
@@ -194,10 +203,35 @@ export default function CoursePlayer() {
         <div className="course-player__layout">
           {/* Main Content - Video */}
           <div className="course-player__main">
-            <div className="course-player__video-placeholder">
-              <div className="play-circle">▶</div>
-              <p>{activeLesson ? `Odtwarzacz: ${activeLesson.title}` : 'Wybierz lekcję'}</p>
-            </div>
+            {activeLesson && activeLesson.videoUrl && isPlaying ? (
+              <div className="course-player__video-container" style={{ width: '100%', aspectRatio: '16/9', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px' }}>
+                <video 
+                  controls 
+                  autoPlay
+                  width="100%" 
+                  height="100%"
+                  key={activeLesson.id}
+                  style={{ objectFit: 'contain' }}
+                >
+                  <source src={activeLesson.videoUrl} type="video/mp4" />
+                  Twój przeglądarka nie obsługuje odtwarzacza wideo.
+                </video>
+              </div>
+            ) : (
+              <div 
+                className="course-player__video-placeholder"
+                onClick={() => {
+                  if (activeLesson?.videoUrl) setIsPlaying(true);
+                }}
+                style={{ cursor: activeLesson?.videoUrl ? 'pointer' : 'default' }}
+              >
+                <div className="play-circle">▶</div>
+                <p>{activeLesson ? `Odtwarzacz: ${activeLesson.title}` : 'Wybierz lekcję'}</p>
+                {activeLesson && !activeLesson.videoUrl && (
+                  <p style={{fontSize: '12px', marginTop: '8px', opacity: 0.7}}>Brak wideo dla tej lekcji</p>
+                )}
+              </div>
+            )}
             
             {activeLesson && (
               <>

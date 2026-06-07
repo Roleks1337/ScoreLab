@@ -1,4 +1,4 @@
-﻿/* - Navbar - */
+/* - Navbar - */
 .navbar {
   position: fixed;
   top: 0;
@@ -37,6 +37,7 @@
   align-items: center;
   gap: var(--space-3);
   cursor: pointer;
+  flex: 1 0 0;
 }
 
 .navbar__logo img {
@@ -57,6 +58,7 @@
   display: flex;
   align-items: center;
   gap: var(--space-1);
+  flex: 0 0 auto;
 }
 
 .navbar__nav a {
@@ -77,6 +79,8 @@
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  flex: 1 0 0;
+  justify-content: flex-end;
 }
 
 .navbar__actions .btn {
@@ -1550,7 +1554,7 @@ section {
   font-weight: 600;
   color: var(--text-primary);
   border-radius: var(--radius-md);
-  transition: background 0.18s ease, color 0.18s ease, transform 0.18s ease;
+  transition: background 0.18s ease, color 0.18s ease;
   text-decoration: none;
   letter-spacing: -0.01em;
 }
@@ -1558,7 +1562,6 @@ section {
 .mobile-menu__nav a:hover {
   background: var(--bg-light);
   color: var(--black);
-  transform: translateX(4px);
 }
 
 /* Backdrop overlay */
@@ -1860,4 +1863,33 @@ section {
   filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4));
 }
 
+/* ── Settings Navbar (Mobile) ────────────────────────── */
+.navbar--settings {
+  display: none;
+}
 
+@media (max-width: 768px) {
+  .navbar--settings {
+    display: flex;
+  }
+  
+  .settings-page {
+    padding-top: 72px !important;
+  }
+
+  .settings-home-logo {
+    display: none !important;
+  }
+}
+
+.mobile-menu__header {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 12px 0 8px 0;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 8px;
+  opacity: 0.8;
+}

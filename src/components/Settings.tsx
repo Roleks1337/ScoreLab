@@ -1,13 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import logoFull from '../assets/Extended_ScoreLab.png';
 import './SettingsMain.css';
 
 export default function Settings() {
   const [user, setUser] = useState<any>(null);
+  const location = useLocation();
   const [activeTab, setActiveTab] = useState('account');
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const tab = params.get('tab');
+    if (tab) {
+      setActiveTab(tab);
+    }
+  }, [location]);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
