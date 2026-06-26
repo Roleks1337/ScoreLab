@@ -4,6 +4,13 @@ import { supabase } from '../lib/supabase';
 import { usePremium } from '../lib/usePremium';
 import { useAdmin } from '../lib/useAdmin';
 import logoFull from '../assets/Zasob1.svg';
+import {
+  type ThemeChoice,
+  getStoredTheme,
+  getStoredContrast,
+  setTheme as persistTheme,
+  setContrast as persistContrast,
+} from '../lib/theme';
 import './SettingsMain.css';
 
 export default function Settings() {
@@ -11,6 +18,20 @@ export default function Settings() {
   const location = useLocation();
   const [activeTab, setActiveTab] = useState('account');
   const [loading, setLoading] = useState(true);
+
+  // Appearance state — initial values come from the shared theme store.
+  const [theme, setThemeState] = useState<ThemeChoice>(() => getStoredTheme());
+  const [highContrast, setHighContrastState] = useState(() => getStoredContrast());
+
+  const setTheme = (choice: ThemeChoice) => {
+    setThemeState(choice);
+    persistTheme(choice);
+  };
+
+  const setHighContrast = (enabled: boolean) => {
+    setHighContrastState(enabled);
+    persistContrast(enabled);
+  };
 
   // Premium code redemption state
   const [codeInput, setCodeInput] = useState('');
@@ -148,46 +169,46 @@ export default function Settings() {
           <img className="invert-logo" src={logoFull} alt="ScoreLab Logo" />
         </Link>
         <div className="sidebar-header">Ustawienia użytkownika</div>
-        <div 
+        <div
           className={`sidebar-item ${activeTab === 'account' ? 'active' : ''}`}
           onClick={() => setActiveTab('account')}
         >
           Moje konto
         </div>
-        <div 
+        <div
           className={`sidebar-item ${activeTab === 'privacy' ? 'active' : ''}`}
           onClick={() => setActiveTab('privacy')}
         >
           Prywatność i bezpieczeństwo
         </div>
-        
+
         <div className="sidebar-divider" />
-        
+
         <div className="sidebar-header">Premium</div>
-        <div 
+        <div
           className={`sidebar-item ${activeTab === 'premium' ? 'active' : ''}`}
           onClick={() => setActiveTab('premium')}
         >
           Premium
           {(premium.isPremium || admin.isAdmin) && <span className="sidebar-premium-badge">✓</span>}
         </div>
-        <div 
+        <div
           className={`sidebar-item ${activeTab === 'premium-settings' ? 'active' : ''}`}
           onClick={() => setActiveTab('premium-settings')}
         >
           Ustawienia Premium
         </div>
-        
+
         <div className="sidebar-divider" />
-        
+
         <div className="sidebar-header">Ustawienia aplikacji</div>
-        <div 
+        <div
           className={`sidebar-item ${activeTab === 'appearance' ? 'active' : ''}`}
           onClick={() => setActiveTab('appearance')}
         >
           Wygląd
         </div>
-        <div 
+        <div
           className={`sidebar-item ${activeTab === 'notifications' ? 'active' : ''}`}
           onClick={() => setActiveTab('notifications')}
         >
@@ -199,7 +220,7 @@ export default function Settings() {
         {activeTab === 'account' && (
           <div className="account-view">
             <h2 className="settings-section-title">Moje konto</h2>
-            
+
             <div className="account-card">
               <div className={`account-card__banner${admin.isAdmin ? ' account-card__banner--admin' : (premium.isPremium ? ' account-card__banner--premium' : '')}`} />
               <div className="account-card__content">
@@ -232,7 +253,7 @@ export default function Settings() {
                     </div>
                     <button className="data-item__action">Edytuj</button>
                   </div>
-                  
+
                   <div className="data-item">
                     <div>
                       <div className="data-item__label">Email</div>
@@ -275,7 +296,7 @@ export default function Settings() {
             <div className="delete-account-section">
               <h2 className="settings-section-title" style={{ color: '#e53e3e' }}>Usuwanie konta</h2>
               <p className="delete-account-text">
-                Usunięcie konta jest procesem nieodwracalnym. Wszystkie Twoje postępy, 
+                Usunięcie konta jest procesem nieodwracalnym. Wszystkie Twoje postępy,
                 statystyki i zakupione kursy zostaną trwale usunięte.
               </p>
               <button className="delete-account-btn">Usuń konto</button>
@@ -286,7 +307,7 @@ export default function Settings() {
         {activeTab === 'premium' && (
           <div className="premium-view">
             <h2 className="settings-section-title">Subskrypcja Premium</h2>
-            
+
             {/* Status bar — dynamic based on premium.isPremium or admin.isAdmin */}
             {(premium.isPremium || admin.isAdmin) ? (
               <div className={`premium-status-bar ${admin.isAdmin ? 'premium-status-bar--admin' : 'premium-status-bar--active'}`}>
@@ -295,7 +316,7 @@ export default function Settings() {
                     {admin.isAdmin ? '🛡️ Twój status: Administrator' : '👑 Twój status: ScoreLab Premium'}
                   </span>
                   <p className="premium-status-bar__desc">
-                    {admin.isAdmin 
+                    {admin.isAdmin
                       ? 'Posiadasz pełny dostęp administratorski do wszystkich funkcji platformy.'
                       : `Subskrypcja aktywna · Wygasa ${formatDate(premium.expiresAt)} (${premium.daysLeft} ${premium.daysLeft === 1 ? 'dzień' : 'dni'} pozostało)`
                     }
@@ -349,7 +370,7 @@ export default function Settings() {
             <div className="premium-features-section">
               <h3 className="premium-features-title">Co zyskujesz z Premium?</h3>
               <div className="premium-features-grid">
-                
+
                 {/* Feature 1: Generowanie matur */}
                 <div className="premium-feature-card">
                   <div className="premium-feature-card__content">
@@ -472,7 +493,7 @@ export default function Settings() {
                 <Link to="/cennik" className="premium-lock-banner__btn">Aktywuj Premium</Link>
               </div>
             )}
-            
+
             <div className="settings-group">
               <h3 className="settings-group-title">Odtwarzacz wideo</h3>
               <div className="settings-row disabled" style={!(premium.isPremium || admin.isAdmin) ? { opacity: 0.6, pointerEvents: 'none' } : {}}>
@@ -482,7 +503,7 @@ export default function Settings() {
                 </div>
                 <div className="settings-toggle"><div className="settings-toggle__handle" /></div>
               </div>
-              
+
               <div className="settings-row disabled" style={!(premium.isPremium || admin.isAdmin) ? { opacity: 0.6, pointerEvents: 'none' } : {}}>
                 <div className="settings-row__info">
                   <div className="settings-row__label">Pobieranie w tle {!(premium.isPremium || admin.isAdmin) && '🔒'}</div>
@@ -509,7 +530,7 @@ export default function Settings() {
         {activeTab === 'privacy' && (
           <div className="settings-view">
             <h2 className="settings-section-title">Prywatność i bezpieczeństwo</h2>
-            
+
             <div className="settings-group">
               <h3 className="settings-group-title">Uwierzytelnianie dwuetapowe (2FA)</h3>
               <div className="settings-row">
@@ -539,19 +560,28 @@ export default function Settings() {
         {activeTab === 'appearance' && (
           <div className="settings-view">
             <h2 className="settings-section-title">Wygląd</h2>
-            
+
             <div className="settings-group">
               <h3 className="settings-group-title">Motyw</h3>
               <div className="theme-selector">
-                <div className="theme-option active">
+                <div
+                  className={`theme-option ${theme === 'light' ? 'active' : ''}`}
+                  onClick={() => setTheme('light')}
+                >
                   <div className="theme-preview theme-preview--light" />
                   <span>Jasny</span>
                 </div>
-                <div className="theme-option">
+                <div
+                  className={`theme-option ${theme === 'dark' ? 'active' : ''}`}
+                  onClick={() => setTheme('dark')}
+                >
                   <div className="theme-preview theme-preview--dark" />
                   <span>Ciemny</span>
                 </div>
-                <div className="theme-option">
+                <div
+                  className={`theme-option ${theme === 'system' ? 'active' : ''}`}
+                  onClick={() => setTheme('system')}
+                >
                   <div className="theme-preview theme-preview--system" />
                   <span>Systemowy</span>
                 </div>
@@ -565,7 +595,12 @@ export default function Settings() {
                   <div className="settings-row__label">Zwiększony kontrast</div>
                   <div className="settings-row__desc">Poprawia czytelność elementów interfejsu.</div>
                 </div>
-                <div className="settings-toggle"><div className="settings-toggle__handle" /></div>
+                <div
+                  className={`settings-toggle ${highContrast ? 'settings-toggle--active' : ''}`}
+                  onClick={() => setHighContrast(!highContrast)}
+                >
+                  <div className="settings-toggle__handle" />
+                </div>
               </div>
             </div>
           </div>
@@ -574,7 +609,7 @@ export default function Settings() {
         {activeTab === 'notifications' && (
           <div className="settings-view">
             <h2 className="settings-section-title">Powiadomienia</h2>
-            
+
             <div className="settings-group">
               <h3 className="settings-group-title">Powiadomienia E-mail</h3>
               <div className="settings-row">

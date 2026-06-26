@@ -445,3 +445,17 @@
 .resource-item .text-muted {
   color: var(--text-secondary);
 }
+
+/* ── Dark mode ───────────────────────────────────────────────── */
+/* Dark-by-design surfaces (background: var(--black) + white content).
+   Re-pin the raw tokens so the global dark flip keeps them dark. */
+[data-theme="dark"] .course-player__video-placeholder,
+[data-theme="dark"] .course-card__wip-badge {
+  --black: #0d0d0d;
+  --white: #ffffff;
+}
+
+/* Lift the video placeholder slightly off the page background */
+[data-theme="dark"] .course-player__video-placeholder {
+  background: #15181f;
+}

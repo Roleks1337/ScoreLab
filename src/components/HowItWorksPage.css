@@ -438,3 +438,18 @@
     margin-bottom: var(--space-8);
   }
 }
+
+/* ── Dark mode ───────────────────────────────────────────────── */
+/* These sections are dark by design (background: var(--black) + white text).
+   Re-pin the raw tokens so the global dark flip doesn't turn them light. */
+[data-theme="dark"] .ai-generator-section,
+[data-theme="dark"] .ai-exam-preview,
+[data-theme="dark"] .premium-badge-3d {
+  --black: #0d0d0d;
+  --white: #ffffff;
+}
+
+/* Soften the white glow so it isn't harsh on a dark page */
+[data-theme="dark"] .floating-glow {
+  opacity: 0.18;
+}

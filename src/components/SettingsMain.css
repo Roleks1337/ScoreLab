@@ -25,6 +25,10 @@
   filter: invert(1);
 }
 
+[data-theme="dark"] .settings-home-logo img {
+  filter: none;
+}
+
 .settings-sidebar {
   width: 320px;
   background: #f7fafc;
@@ -281,6 +285,21 @@
 .theme-preview--light { background: #f7fafc; }
 .theme-preview--dark { background: #1a202c; }
 .theme-preview--system { background: linear-gradient(135deg, #f7fafc 50%, #1a202c 50%); }
+
+/* Selected theme indicator */
+.theme-option span {
+  font-weight: 600;
+  color: #4a5568;
+}
+
+.theme-option.active .theme-preview {
+  border-color: #0066ff;
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.2);
+}
+
+.theme-option.active span {
+  color: #0066ff;
+}
 
 .password-section {
   margin-top: 48px;
@@ -1132,4 +1151,224 @@
 
 .premium-status-bar__badge--admin {
   background: linear-gradient(135deg, #ef4444, #dc2626) !important;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK MODE — applied when <html data-theme="dark">
+   Scoped to the settings page surfaces.
+   ═══════════════════════════════════════════════════════════════ */
+[data-theme="dark"] .settings-page {
+  background: #0f1115;
+  color: #e6e8eb;
+}
+
+[data-theme="dark"] .settings-sidebar {
+  background: #161922;
+  border-right-color: #262b36;
+}
+
+[data-theme="dark"] .sidebar-header,
+[data-theme="dark"] .settings-group-title,
+[data-theme="dark"] .data-item__label {
+  color: #8a93a3;
+}
+
+[data-theme="dark"] .sidebar-item {
+  color: #b8c0cc;
+}
+
+[data-theme="dark"] .sidebar-item:hover {
+  background: #1f2430;
+}
+
+[data-theme="dark"] .sidebar-divider {
+  border-color: #262b36;
+  background: #262b36;
+}
+
+[data-theme="dark"] .settings-section-title,
+[data-theme="dark"] .account-card__name,
+[data-theme="dark"] .data-item__value,
+[data-theme="dark"] .settings-row__label,
+[data-theme="dark"] .premium-features-title,
+[data-theme="dark"] .premium-code-title,
+[data-theme="dark"] .premium-lock-text {
+  color: #f1f3f5;
+}
+
+[data-theme="dark"] .settings-row__desc,
+[data-theme="dark"] .account-card__tag,
+[data-theme="dark"] .premium-status-bar__desc,
+[data-theme="dark"] .premium-code-desc,
+[data-theme="dark"] .premium-lock-sub,
+[data-theme="dark"] .mock-title,
+[data-theme="dark"] .delete-account-text {
+  color: #9aa3b0;
+}
+
+/* Surfaces: cards, panels, lists */
+[data-theme="dark"] .account-card,
+[data-theme="dark"] .premium-feature-card {
+  background: #161922;
+  border-color: #262b36;
+}
+
+[data-theme="dark"] .data-list,
+[data-theme="dark"] .password-section,
+[data-theme="dark"] .premium-status-bar,
+[data-theme="dark"] .premium-code-section {
+  background: #1a1e27;
+  border-color: #262b36;
+}
+
+[data-theme="dark"] .account-card__avatar-wrapper {
+  background: #161922;
+}
+
+[data-theme="dark"] .account-card__avatar {
+  border-color: #161922;
+}
+
+[data-theme="dark"] .settings-row {
+  border-bottom-color: #262b36;
+}
+
+[data-theme="dark"] .data-item__action {
+  background: #232834;
+  color: #e6e8eb;
+  border-color: #353c4a;
+}
+
+[data-theme="dark"] .data-item__action:hover {
+  background: #2c3340;
+}
+
+/* Toggles */
+[data-theme="dark"] .settings-toggle {
+  background: #3a4150;
+}
+
+[data-theme="dark"] .settings-toggle--active {
+  background: #0066ff;
+}
+
+/* Theme preview labels + selection */
+[data-theme="dark"] .theme-option span {
+  color: #b8c0cc;
+}
+
+[data-theme="dark"] .theme-preview {
+  border-color: #353c4a;
+}
+
+[data-theme="dark"] .theme-option.active span {
+  color: #4d9bff;
+}
+
+[data-theme="dark"] .theme-option.active .theme-preview {
+  border-color: #4d9bff;
+  box-shadow: 0 0 0 3px rgba(77, 155, 255, 0.25);
+}
+
+/* Inputs */
+[data-theme="dark"] .premium-code-input {
+  background: #232834;
+  border-color: #353c4a;
+  color: #f1f3f5;
+}
+
+[data-theme="dark"] .premium-code-input::placeholder {
+  color: #6b7382;
+}
+
+/* Mock cards inside premium previews */
+[data-theme="dark"] .mock-task-item,
+[data-theme="dark"] .mock-course-item,
+[data-theme="dark"] .mock-control-group select {
+  background: #1f2430;
+  border-color: #2d3340;
+}
+
+[data-theme="dark"] .course-name {
+  color: #e6e8eb;
+}
+
+[data-theme="dark"] .task-desc,
+[data-theme="dark"] .mock-control-group select {
+  color: #b8c0cc;
+}
+
+/* Glass lock overlay needs a dark tint instead of white */
+[data-theme="dark"] .premium-lock-overlay {
+  background: rgba(15, 17, 21, 0.82);
+}
+
+[data-theme="dark"] .premium-feature-card:hover .premium-lock-overlay {
+  background: rgba(15, 17, 21, 0.7);
+}
+
+/* Delete-account danger zone */
+[data-theme="dark"] .delete-account-section {
+  background: #2a1416;
+  border-color: #5c2326;
+}
+
+[data-theme="dark"] .delete-account-btn {
+  background: #2a1416;
+}
+
+/* Edit button stays readable */
+[data-theme="dark"] .account-card__edit-btn {
+  background: #f1f3f5;
+  color: #0f1115;
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   HIGH CONTRAST — applied when <html data-contrast="high">
+   ═══════════════════════════════════════════════════════════════ */
+[data-contrast="high"] .settings-page {
+  --hc-border: #000000;
+}
+
+[data-contrast="high"] .sidebar-item,
+[data-contrast="high"] .settings-row__desc,
+[data-contrast="high"] .account-card__tag,
+[data-contrast="high"] .data-item__label,
+[data-contrast="high"] .settings-group-title,
+[data-contrast="high"] .sidebar-header {
+  color: #1a202c;
+}
+
+[data-contrast="high"] .account-card,
+[data-contrast="high"] .data-item__action,
+[data-contrast="high"] .premium-feature-card,
+[data-contrast="high"] .settings-row {
+  border-color: #1a202c !important;
+}
+
+[data-contrast="high"] .settings-toggle {
+  background: #4a5568;
+  border: 2px solid #1a202c;
+}
+
+/* High contrast on top of dark mode */
+[data-theme="dark"][data-contrast="high"] .settings-page,
+[data-contrast="high"] [data-theme="dark"] .settings-page {
+  color: #ffffff;
+}
+
+[data-theme="dark"] [data-contrast="high"] .sidebar-item,
+[data-theme="dark"][data-contrast="high"] .sidebar-item,
+[data-theme="dark"][data-contrast="high"] .settings-row__desc,
+[data-theme="dark"][data-contrast="high"] .account-card__tag,
+[data-theme="dark"][data-contrast="high"] .data-item__label,
+[data-theme="dark"][data-contrast="high"] .settings-group-title,
+[data-theme="dark"][data-contrast="high"] .sidebar-header {
+  color: #ffffff;
+}
+
+[data-theme="dark"][data-contrast="high"] .account-card,
+[data-theme="dark"][data-contrast="high"] .premium-feature-card,
+[data-theme="dark"][data-contrast="high"] .settings-row {
+  border-color: #ffffff !important;
 }
