@@ -1,19 +1,22 @@
 import { useState, useEffect } from 'react'
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { supabase } from './lib/supabase'
+import { usePremium } from './lib/usePremium'
+import { useAdmin } from './lib/useAdmin'
 import './index.css'
 import './App.css'
 import Pricing from './components/Pricing'
 import Courses from './components/Courses'
 import CoursePlayer from './components/CoursePlayer'
 import HowItWorksPage from './components/HowItWorksPage'
-import logoFull from './assets/Extended_ScoreLab.png'
+import logoFull from './assets/Zasob1.svg'
 import logoSmall from './assets/ScoreLabSmall.png'
 import Settings from './components/Settings'
 import Statistics from './components/Statistics'
+import AdminPanel from './components/AdminPanel'
 
 /* ── Navbar ────────────────────────────────────────────────── */
-function Navbar({ user, isSettingsPage }: { user: any, isSettingsPage?: boolean }) {
+function Navbar({ user, isSettingsPage, isPremium, isAdmin }: { user: any, isSettingsPage?: boolean, isPremium?: boolean, isAdmin?: boolean }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -62,7 +65,7 @@ function Navbar({ user, isSettingsPage }: { user: any, isSettingsPage?: boolean 
             }
           }}
         >
-          <img className="logo--full" src={logoFull} alt="ScoreLab" />
+          <img className="logo--full invert-logo" src={logoFull} alt="ScoreLab" />
           <img className="logo--small" src={logoSmall} alt="ScoreLab" />
         </div>
         
@@ -79,10 +82,11 @@ function Navbar({ user, isSettingsPage }: { user: any, isSettingsPage?: boolean 
           {user ? (
             <div className="navbar__user-container">
               <div 
-                className="navbar__avatar" 
+                className={`navbar__avatar${isPremium ? ' navbar__avatar--premium' : ''}${isAdmin ? ' navbar__avatar--admin' : ''}`}
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 title={user.user_metadata?.full_name || user.email}
               >
+                {!isAdmin && isPremium && <span className="navbar__avatar-crown">👑</span>}
                 {user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
               </div>
               
@@ -91,12 +95,21 @@ function Navbar({ user, isSettingsPage }: { user: any, isSettingsPage?: boolean 
                   <div className="user-menu-overlay" onClick={() => setIsUserMenuOpen(false)} />
                   <div className="user-dropdown">
                     <div className="user-dropdown__header">
-                      <div className="user-dropdown__name">{user.user_metadata?.full_name || 'Użytkownik'}</div>
+                      <div className="user-dropdown__name">
+                        {user.user_metadata?.full_name || 'Użytkownik'}
+                        {isAdmin && <span className="user-dropdown__admin-badge">🛡️ Admin</span>}
+                        {!isAdmin && isPremium && <span className="user-dropdown__premium-badge">👑 Premium</span>}
+                      </div>
                       <div className="user-dropdown__email">{user.email}</div>
                     </div>
                     
                     <div className="user-dropdown__divider" />
                     
+                    {isAdmin && (
+                      <Link to="/admin" className="user-dropdown__item user-dropdown__item--admin" onClick={() => setIsUserMenuOpen(false)}>
+                        <span className="user-dropdown__icon">🛡️</span> Panel Admina
+                      </Link>
+                    )}
                     <Link to="/cennik" className="user-dropdown__item user-dropdown__item--featured" onClick={() => setIsUserMenuOpen(false)}>
                       <span className="user-dropdown__icon">🚀</span> Panel Platformy
                     </Link>
@@ -143,8 +156,12 @@ function Navbar({ user, isSettingsPage }: { user: any, isSettingsPage?: boolean 
               </Link>
               <div className="mobile-menu__header">Ustawienia użytkownika</div>
               <Link to="/ustawienia?tab=account" onClick={closeMenu}>Moje konto</Link>
-              <Link to="/ustawienia?tab=premium" onClick={closeMenu}>Premium</Link>
               <Link to="/ustawienia?tab=privacy" onClick={closeMenu}>Prywatność i bezpieczeństwo</Link>
+              
+              <div className="mobile-menu__header" style={{ marginTop: '20px' }}>Premium</div>
+              <Link to="/ustawienia?tab=premium" onClick={closeMenu}>Premium</Link>
+              <Link to="/ustawienia?tab=premium-settings" onClick={closeMenu}>Ustawienia Premium</Link>
+              
               <div className="mobile-menu__header" style={{ marginTop: '20px' }}>Ustawienia aplikacji</div>
               <Link to="/ustawienia?tab=appearance" onClick={closeMenu}>Wygląd</Link>
               <Link to="/ustawienia?tab=notifications" onClick={closeMenu}>Powiadomienia</Link>
@@ -647,7 +664,7 @@ function Footer() {
         <div className="footer__top">
           <div>
             <div className="footer__logo">
-              <img src={logoFull} style={{filter: "invert(1)"}} alt="ScoreLab"/>
+              <img className="invert-logo" src={logoFull} alt="ScoreLab"/>
             </div>
             <p className="footer__tagline">
               Platforma maturalna nowej generacji. Ucz się świadomie, zdawaj pewnie.
@@ -693,6 +710,8 @@ function Footer() {
 /* ── App ───────────────────────────────────────────────────── */
 export default function App() {
   const [user, setUser] = useState<any>(null)
+  const premium = usePremium(user?.id)
+  const admin = useAdmin(user?.id)
 
   useEffect(() => {
     // Get initial session
@@ -714,7 +733,7 @@ export default function App() {
         path="/"
         element={
           <>
-            <Navbar user={user} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <Hero user={user} />
             <Features />
             <Bento />
@@ -729,8 +748,8 @@ export default function App() {
         path="/cennik"
         element={
           <>
-            <Navbar user={user} />
-            <Pricing user={user} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Pricing user={user} isPremium={premium.isPremium} />
             <Footer />
           </>
         }
@@ -739,7 +758,7 @@ export default function App() {
         path="/kursy"
         element={
           <>
-            <Navbar user={user} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <Courses />
             <Footer />
           </>
@@ -749,7 +768,7 @@ export default function App() {
         path="/kursy/:courseId"
         element={
           <>
-            <Navbar user={user} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <CoursePlayer />
             <Footer />
           </>
@@ -759,7 +778,7 @@ export default function App() {
         path="/wip"
         element={
           <>
-            <Navbar user={user} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <div style={{ paddingTop: '150px', paddingBottom: '100px', textAlign: 'center', minHeight: '80vh', background: 'var(--surface-alt)' }}>
               <div className="container">
                 <h1 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '24px' }}>Work In Progress 🛠️</h1>
@@ -774,7 +793,7 @@ export default function App() {
         path="/jak-to-dziala"
         element={
           <>
-            <Navbar user={user} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <HowItWorksPage />
             <Footer />
           </>
@@ -784,7 +803,7 @@ export default function App() {
         path="/statystyki"
         element={
           <>
-            <Navbar user={user} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <Statistics />
             <Footer />
           </>
@@ -794,10 +813,14 @@ export default function App() {
         path="/ustawienia"
         element={
           <>
-            <Navbar user={user} isSettingsPage={true} />
+            <Navbar user={user} isSettingsPage={true} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <Settings />
           </>
         }
+      />
+      <Route
+        path="/admin"
+        element={<AdminPanel />}
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

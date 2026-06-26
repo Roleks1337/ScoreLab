@@ -38,7 +38,7 @@ const plans = [
   },
   {
     name: 'Premium',
-    price: 30,
+    price: 29,
     period: 'mies.',
     badge: null,
     featured: false,
@@ -53,7 +53,12 @@ const plans = [
   },
 ]
 
-function Pricing({ user }: { user: any }) {
+interface PricingProps {
+  user: any;
+  isPremium?: boolean;
+}
+
+function Pricing({ user, isPremium = false }: PricingProps) {
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMode, setModalMode] = useState<'register' | 'login'>('register');
@@ -71,9 +76,12 @@ function Pricing({ user }: { user: any }) {
     } else {
       // Premium
       if (user) {
-        // Here we could redirect to a payment page or similar
-        // For now, let's just go to kursy or show a message
-        navigate('/wip');
+        if (isPremium) {
+          navigate('/kursy');
+        } else {
+          // Direct to settings page where they can redeem codes or activate
+          navigate('/ustawienia');
+        }
       } else {
         setModalMode('register');
         setIsModalOpen(true);
@@ -81,6 +89,56 @@ function Pricing({ user }: { user: any }) {
     }
   };
 
+  const isCardFeatured = (planName: string) => {
+    if (planName === 'Bez logowania') return false;
+    if (planName === 'Zalogowana') {
+      return !(user && isPremium);
+    }
+    if (planName === 'Premium') {
+      return !!(user && isPremium);
+    }
+    return false;
+  };
+
+  const getCardBadge = (planName: string, defaultBadge: string | null) => {
+    if (planName === 'Premium' && user && isPremium) {
+      return 'Twój aktywny plan';
+    }
+    if (planName === 'Zalogowana' && user && !isPremium) {
+      return 'Twój aktywny plan';
+    }
+    return defaultBadge;
+  };
+
+  const getButtonClass = (planName: string) => {
+    if (planName === 'Bez logowania') return 'btn-secondary';
+    if (planName === 'Zalogowana') {
+      return (user && isPremium) ? 'btn-primary' : 'btn-blue';
+    }
+    if (planName === 'Premium') {
+      return (user && isPremium) ? 'btn-blue' : 'btn-primary';
+    }
+    return 'btn-secondary';
+  };
+
+  const getButtonText = (planName: string, defaultCta: string) => {
+    if (planName === 'Bez logowania') {
+      return user ? 'Przejdź do kursów' : defaultCta;
+    }
+    if (planName === 'Zalogowana') {
+      if (user) {
+        return isPremium ? 'Przejdź do kursów' : 'Twój obecny plan';
+      }
+      return defaultCta;
+    }
+    if (planName === 'Premium') {
+      if (user) {
+        return isPremium ? 'Twój obecny plan' : defaultCta;
+      }
+      return defaultCta;
+    }
+    return defaultCta;
+  };
 
   return (
     <>
@@ -91,40 +149,45 @@ function Pricing({ user }: { user: any }) {
             <h2 className="section-title">Plan dla każdego</h2>
             <p className="section-subtitle">Zacznij za darmo, zapłać gdy zobaczysz efekty. Bez zobowiązań, cancel w dowolnej chwili.</p>
           </div>
-        <div className="pricing__grid">
-          {plans.map(plan => (
-            <div key={plan.name} className={`pricing-card${plan.featured ? ' pricing-card--featured' : ''}`}>
-              {plan.badge && <div className="pricing-card__badge">{plan.badge}</div>}
-              <div className="pricing-card__name">{plan.name}</div>
-              <div className="pricing-card__price">
-                <span className="pricing-card__currency">zł</span>
-                <span className="pricing-card__amount">{plan.price}</span>
-                <span className="pricing-card__period">/{plan.period}</span>
-              </div>
-              <div className="pricing-card__divider" />
-              <ul className="pricing-card__features">
-                {plan.features.map(f => (
-                  <li key={f} className="pricing-feature">
-                    <span className="pricing-feature__check">✓</span>
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <div className="pricing-card__cta">
-                  <button 
-                    id={`pricing-btn-${plan.name.toLowerCase()}`} 
-                    className={`btn ${plan.ctaClass}`}
-                    onClick={() => handleCtaClick(plan.name)}
-                  >
-                    {plan.name === 'Zalogowana' && user 
-                      ? 'Twój obecny plan' 
-                      : (plan.name === 'Bez logowania' && user ? 'Przejdź do kursów' : plan.cta)}
-                  </button>
-              </div>
-            </div>
-          ))}
+          <div className="pricing__grid">
+            {plans.map(plan => {
+              const featured = isCardFeatured(plan.name);
+              const badge = getCardBadge(plan.name, plan.badge);
+              const buttonClass = getButtonClass(plan.name);
+              const buttonText = getButtonText(plan.name, plan.cta);
+
+              return (
+                <div key={plan.name} className={`pricing-card${featured ? ' pricing-card--featured' : ''}`}>
+                  {badge && <div className="pricing-card__badge">{badge}</div>}
+                  <div className="pricing-card__name">{plan.name}</div>
+                  <div className="pricing-card__price">
+                    <span className="pricing-card__currency">zł</span>
+                    <span className="pricing-card__amount">{plan.price}</span>
+                    <span className="pricing-card__period">/{plan.period}</span>
+                  </div>
+                  <div className="pricing-card__divider" />
+                  <ul className="pricing-card__features">
+                    {plan.features.map(f => (
+                      <li key={f} className="pricing-feature">
+                        <span className="pricing-feature__check">✓</span>
+                        {f}
+                      </li>
+                    ))}
+                  </ul>
+                  <div className="pricing-card__cta">
+                    <button 
+                      id={`pricing-btn-${plan.name.toLowerCase()}`} 
+                      className={`btn ${buttonClass}`}
+                      onClick={() => handleCtaClick(plan.name)}
+                    >
+                      {buttonText}
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
-      </div>
       </section>
 
       <AuthModal 

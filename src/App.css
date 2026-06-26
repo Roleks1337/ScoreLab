@@ -45,6 +45,10 @@
   width: auto;
 }
 
+.navbar__logo img.invert-logo {
+  filter: invert(1);
+}
+
 /* Desktop: full logo, hide small */
 .logo--small {
   display: none;
@@ -1527,17 +1531,23 @@ section {
   background: rgba(255, 255, 255, 0.97);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
   overflow: hidden;
   max-height: 0;
+  visibility: hidden;
   transition: max-height 0.38s cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 0.3s ease;
+    box-shadow 0.3s ease,
+    visibility 0.38s;
   box-shadow: none;
+  -webkit-overflow-scrolling: touch;
+  border-bottom: 0 solid var(--border);
 }
 
 .mobile-menu--open {
-  max-height: 450px;
+  max-height: 490px;
+  overflow-y: auto;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.10);
+  visibility: visible;
+  border-bottom: 1px solid var(--border);
 }
 
 .mobile-menu__nav {
@@ -1892,4 +1902,127 @@ section {
   border-bottom: 1px solid var(--border);
   margin-bottom: 8px;
   opacity: 0.8;
+}
+
+/* ── Premium Navbar Styles ──────────────────────────────────── */
+
+/* Gold ring on avatar when premium */
+.navbar__avatar--premium {
+  border: 2px solid #f59e0b !important;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.4) !important;
+  position: relative;
+}
+
+/* Floating crown above navbar avatar */
+.navbar__avatar-crown {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  filter: drop-shadow(0 1px 3px rgba(0,0,0,0.2));
+  animation: navCrownFloat 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes navCrownFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+/* Premium badge next to name in dropdown */
+.user-dropdown__premium-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+/* Make navbar__user-container a positioning parent for the crown */
+.navbar__user-container {
+  position: relative;
+}
+
+/* ── Admin Navbar Styles ────────────────────────────────────── */
+
+/* Red glowing avatar for admin */
+.navbar__avatar--admin {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  border: 2px solid #ff4a4a !important;
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.6), 0 2px 8px rgba(239, 68, 68, 0.4) !important;
+  position: relative;
+}
+
+/* Shield badge above admin avatar (kept in CSS but not rendered) */
+.navbar__avatar-admin-badge {
+  position: absolute;
+  top: -18px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 14px;
+  filter: drop-shadow(0 1px 4px rgba(239, 68, 68, 0.5));
+  animation: adminBadgeFloat 3s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes adminBadgeFloat {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-3px); }
+}
+
+/* Admin badge in dropdown (red, distinct from gold Premium badge) */
+.user-dropdown__admin-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+/* Admin panel link in dropdown — red featured item */
+.user-dropdown__item--admin {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.1), rgba(220, 38, 38, 0.1)) !important;
+  color: #f87171 !important;
+  border: 1px solid rgba(239, 68, 68, 0.2) !important;
+  margin: 4px 0;
+}
+
+.user-dropdown__item--admin:hover {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.18), rgba(220, 38, 38, 0.18)) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(239, 68, 68, 0.25);
+}
+
+/* ── Desktop overrides (Hidden mobile elements) ── */
+@media (min-width: 769px) {
+  .mobile-menu,
+  .mobile-menu__backdrop {
+    display: none !important;
+  }
+}
+
+/* ── Mobile header scrolling (Absolute position) ── */
+@media (max-width: 768px) {
+  .navbar,
+  .navbar.scrolled,
+  .navbar.menu-open {
+    position: absolute !important;
+  }
+  .mobile-menu {
+    position: absolute !important;
+  }
 }
