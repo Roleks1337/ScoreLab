@@ -1,22 +1,36 @@
 import { useState, useEffect } from 'react'
 import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
+import { supabase } from './lib/supabase'
+import { usePremium } from './lib/usePremium'
+import { useAdmin } from './lib/useAdmin'
 import './index.css'
 import './App.css'
 import Pricing from './components/Pricing'
 import Courses from './components/Courses'
 import CoursePlayer from './components/CoursePlayer'
-import logoFull from './assets/Extended_ScoreLab.png'
+import HowItWorksPage from './components/HowItWorksPage'
+import logoFull from './assets/Zasob1.svg'
 import logoSmall from './assets/ScoreLabSmall.png'
+import Settings from './components/Settings'
+import Statistics from './components/Statistics'
+import AdminPanel from './components/AdminPanel'
 
 /* ── Navbar ────────────────────────────────────────────────── */
-function Navbar() {
+function Navbar({ user, isSettingsPage, isPremium, isAdmin }: { user: any, isSettingsPage?: boolean, isPremium?: boolean, isAdmin?: boolean }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const location = useLocation()
   const navigate = useNavigate()
 
   const isHomePage = location.pathname === '/'
   const sectionHref = (sectionId: string) => (isHomePage ? `#${sectionId}` : `/#${sectionId}`)
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut()
+    setIsUserMenuOpen(false)
+    navigate('/')
+  }
 
   const handleLogoClick = () => {
     navigate('/')
@@ -37,7 +51,7 @@ function Navbar() {
 
   return (
     <>
-      <nav className={`navbar${scrolled ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}`}>
+      <nav className={`navbar${(scrolled || !isHomePage) ? ' scrolled' : ''}${menuOpen ? ' menu-open' : ''}${isSettingsPage ? ' navbar--settings' : ''}`}>
         <div
           className="navbar__logo"
           role="button"
@@ -51,16 +65,76 @@ function Navbar() {
             }
           }}
         >
-          <img className="logo--full" src={logoFull} alt="ScoreLab" />
+          <img className="logo--full invert-logo" src={logoFull} alt="ScoreLab" />
           <img className="logo--small" src={logoSmall} alt="ScoreLab" />
         </div>
-        <div className="navbar__nav">
-          <Link to="/kursy">Kursy</Link>
-          <a href={sectionHref('jak-to-dziala')}>Jak to działa</a>
-          <a href={sectionHref('opinie')}>Opinie</a>
-        </div>
+        
+        {!isSettingsPage && (
+          <div className="navbar__nav">
+            <Link to="/kursy">Kursy</Link>
+            <Link to="/jak-to-dziala">Jak to działa</Link>
+            <a href={sectionHref('opinie')}>Opinie</a>
+            <Link to="/wip" className="navbar__support-link" style={{ color: 'var(--blue-light)', fontWeight: 700 }}>Wesprzyj</Link>
+          </div>
+        )}
+
         <div className="navbar__actions">
-          <Link className="navbar__platform-label" to="/cennik">Platforma</Link>
+          {user ? (
+            <div className="navbar__user-container">
+              <div 
+                className={`navbar__avatar${isPremium ? ' navbar__avatar--premium' : ''}${isAdmin ? ' navbar__avatar--admin' : ''}`}
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                title={user.user_metadata?.full_name || user.email}
+              >
+                {!isAdmin && isPremium && <span className="navbar__avatar-crown">👑</span>}
+                {user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+              </div>
+              
+              {isUserMenuOpen && (
+                <>
+                  <div className="user-menu-overlay" onClick={() => setIsUserMenuOpen(false)} />
+                  <div className="user-dropdown">
+                    <div className="user-dropdown__header">
+                      <div className="user-dropdown__name">
+                        {user.user_metadata?.full_name || 'Użytkownik'}
+                        {isAdmin && <span className="user-dropdown__admin-badge">🛡️ Admin</span>}
+                        {!isAdmin && isPremium && <span className="user-dropdown__premium-badge">👑 Premium</span>}
+                      </div>
+                      <div className="user-dropdown__email">{user.email}</div>
+                    </div>
+                    
+                    <div className="user-dropdown__divider" />
+                    
+                    {isAdmin && (
+                      <Link to="/admin" className="user-dropdown__item user-dropdown__item--admin" onClick={() => setIsUserMenuOpen(false)}>
+                        <span className="user-dropdown__icon">🛡️</span> Panel Admina
+                      </Link>
+                    )}
+                    <Link to="/cennik" className="user-dropdown__item user-dropdown__item--featured" onClick={() => setIsUserMenuOpen(false)}>
+                      <span className="user-dropdown__icon">🚀</span> Panel Platformy
+                    </Link>
+
+                    <div className="user-dropdown__divider" />
+                    
+                    <Link to="/statystyki" className="user-dropdown__item" onClick={() => setIsUserMenuOpen(false)}>
+                      <span className="user-dropdown__icon">📊</span> Statystyki
+                    </Link>
+                    <Link to="/ustawienia" className="user-dropdown__item" onClick={() => setIsUserMenuOpen(false)}>
+                      <span className="user-dropdown__icon">⚙️</span> Customizuj konto
+                    </Link>
+                    
+                    <div className="user-dropdown__divider" />
+                    
+                    <button className="user-dropdown__item user-dropdown__item--logout" onClick={handleLogout}>
+                      <span className="user-dropdown__icon">🚪</span> Wyloguj się
+                    </button>
+                  </div>
+                </>
+              )}
+            </div>
+          ) : (
+            <Link className="navbar__platform-label" to="/cennik">Platforma</Link>
+          )}
         </div>
         <button
           className={`hamburger${menuOpen ? ' hamburger--open' : ''}`}
@@ -75,10 +149,32 @@ function Navbar() {
       {/* Mobile drawer */}
       <div className={`mobile-menu${menuOpen ? ' mobile-menu--open' : ''}`} aria-hidden={!menuOpen}>
         <nav className="mobile-menu__nav">
-          <Link to="/kursy" onClick={closeMenu}>Kursy</Link>
-          <a href={sectionHref('jak-to-dziala')} onClick={closeMenu}>Jak to działa</a>
-          <Link to="/cennik" onClick={closeMenu}>Cennik</Link>
-          <a href={sectionHref('opinie')} onClick={closeMenu}>Opinie</a>
+          {isSettingsPage ? (
+            <>
+              <Link to="/" onClick={closeMenu} style={{ marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--blue-light)', fontWeight: 700, fontSize: '15px' }}>
+                <span>←</span> Wróć do strony głównej
+              </Link>
+              <div className="mobile-menu__header">Ustawienia użytkownika</div>
+              <Link to="/ustawienia?tab=account" onClick={closeMenu}>Moje konto</Link>
+              <Link to="/ustawienia?tab=privacy" onClick={closeMenu}>Prywatność i bezpieczeństwo</Link>
+              
+              <div className="mobile-menu__header" style={{ marginTop: '20px' }}>Premium</div>
+              <Link to="/ustawienia?tab=premium" onClick={closeMenu}>Premium</Link>
+              <Link to="/ustawienia?tab=premium-settings" onClick={closeMenu}>Ustawienia Premium</Link>
+              
+              <div className="mobile-menu__header" style={{ marginTop: '20px' }}>Ustawienia aplikacji</div>
+              <Link to="/ustawienia?tab=appearance" onClick={closeMenu}>Wygląd</Link>
+              <Link to="/ustawienia?tab=notifications" onClick={closeMenu}>Powiadomienia</Link>
+            </>
+          ) : (
+            <>
+              <Link to="/kursy" onClick={closeMenu}>Kursy</Link>
+              <Link to="/jak-to-dziala" onClick={closeMenu}>Jak to działa</Link>
+              <Link to="/cennik" onClick={closeMenu}>Cennik</Link>
+              <a href={sectionHref('opinie')} onClick={closeMenu}>Opinie</a>
+              <Link to="/wip" onClick={closeMenu} style={{ color: 'var(--blue-light)' }}>Wesprzyj</Link>
+            </>
+          )}
         </nav>
       </div>
 
@@ -89,7 +185,7 @@ function Navbar() {
 }
 
 /* ── Hero ──────────────────────────────────────────────────── */
-function Hero() {
+function Hero({ user }: { user: any }) {
   return (
     <section className="hero" id="hero">
       <div className="hero__bg-blob hero__bg-blob--1" />
@@ -111,12 +207,18 @@ function Hero() {
             Ucz się we własnym tempie i sprawdzaj postępy na bieżąco.
           </p>
           <div className="hero__actions animate-fade-up delay-3">
-            <button id="hero-cta-start" className="btn btn-primary">
-              Zacznij za darmo →
-            </button>
-            <button id="hero-cta-preview" className="btn btn-secondary">
+            {user ? (
+              <Link to="/kursy" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+                Przejdź do kursów →
+              </Link>
+            ) : (
+              <a href="#cennik" id="hero-cta-start" className="btn btn-primary" style={{ textDecoration: 'none' }}>
+                Zacznij za darmo →
+              </a>
+            )}
+            <Link to="/kursy" id="hero-cta-preview" className="btn btn-secondary" style={{ textDecoration: 'none' }}>
               Podgląd kursu
-            </button>
+            </Link>
           </div>
           <div className="hero__stats animate-fade-up delay-4">
             <div>
@@ -362,36 +464,6 @@ function Bento() {
   )
 }
 
-/* ── How it works ──────────────────────────────────────────── */
-const steps = [
-  { icon: '🔍', title: 'Zrób test poziomujący', text: 'Krótki test na starcie wskaże Twoje mocne strony i luki — bez oceniania, tylko po to, by uczyć się efektywniej.' },
-  { icon: '📚', title: 'Oglądaj lekcje', text: 'Krótkie, konkretne lekcje wideo z podziałem na działy. Możesz wracać do nich w dowolnym momencie.' },
-  { icon: '✏️', title: 'Rozwiązuj zadania', text: 'Tysiące zadań z pełnymi rozwiązaniami i wskazówkami. System wskazuje, co powtórzyć, jeśli popełnisz błąd.' },
-  { icon: '🏆', title: 'Wejdź na maturę pewny', text: 'Symuluj prawdziwy egzamin na arkuszach CKE. Sprawdzaj, czy osiągnąłeś cel, zanim wejdziesz do sali.' },
-]
-
-function HowItWorks() {
-  return (
-    <section className="how-it-works" id="jak-to-dziala">
-      <div className="container">
-        <div className="section-label">Proces</div>
-        <h2 className="section-title">Od zera do matury<br />w 4 krokach</h2>
-        <p className="section-subtitle">Prosty system, który przeprowadzi Cię przez cały materiał — bez zbędnego stresu.</p>
-        <div className="steps__grid">
-          {steps.map((step, i) => (
-            <div key={step.title} className="step-card">
-              <div className="step-card__number">0{i + 1}</div>
-              <div className="step-card__icon">{step.icon}</div>
-              <h3 className="step-card__title">{step.title}</h3>
-              <p className="step-card__text">{step.text}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-    </section>
-  )
-}
-
 /* ── Testimonials ──────────────────────────────────────────── */
 const testimonials = [
   {
@@ -559,15 +631,25 @@ function FAQ() {
 }
 
 /* ── CTA Banner ────────────────────────────────────────────── */
-function CTABanner() {
+function CTABanner({ user }: { user: any }) {
   return (
     <section className="cta-banner">
       <div className="container">
-        <h2 className="cta-banner__title">Gotowy na 100%<br />z matmy?</h2>
-        <p className="cta-banner__subtitle">Dołącz do ponad 2 400 uczniów. Pierwsze 7 dni za darmo — bez karty kredytowej.</p>
+        <h2 className="cta-banner__title">
+          {user ? 'Kontynuuj swoją naukę' : 'Gotowy na 100% z matmy?'}
+        </h2>
+        <p className="cta-banner__subtitle">
+          {user ? 'Twoje postępy czekają. Wróć do lekcji i szlifuj swoje umiejętności.' : 'Dołącz do ponad 2 400 uczniów. Pierwsze 7 dni za darmo — bez karty kredytowej.'}
+        </p>
         <div className="cta-banner__actions">
-          <button id="cta-start-free" className="btn btn-blue">Zacznij za darmo →</button>
-          <button id="cta-view-plans" className="btn btn-secondary">Przeglądaj plany</button>
+          {user ? (
+            <Link to="/kursy" className="btn btn-blue" style={{ textDecoration: 'none' }}>Przejdź do kursów →</Link>
+          ) : (
+            <>
+              <Link to="/cennik" id="cta-start-free" className="btn btn-blue" style={{ textDecoration: 'none' }}>Zacznij za darmo →</Link>
+              <Link to="/cennik" id="cta-view-plans" className="btn btn-secondary" style={{ textDecoration: 'none' }}>Przeglądaj plany</Link>
+            </>
+          )}
         </div>
       </div>
     </section>
@@ -582,7 +664,7 @@ function Footer() {
         <div className="footer__top">
           <div>
             <div className="footer__logo">
-              <img src={logoFull} style={{filter: "invert(1)"}} alt="ScoreLab"/>
+              <img className="invert-logo" src={logoFull} alt="ScoreLab"/>
             </div>
             <p className="footer__tagline">
               Platforma maturalna nowej generacji. Ucz się świadomie, zdawaj pewnie.
@@ -627,20 +709,37 @@ function Footer() {
 
 /* ── App ───────────────────────────────────────────────────── */
 export default function App() {
+  const [user, setUser] = useState<any>(null)
+  const premium = usePremium(user?.id)
+  const admin = useAdmin(user?.id)
+
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setUser(session?.user ?? null)
+    })
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
   return (
     <Routes>
       <Route
         path="/"
         element={
           <>
-            <Navbar />
-            <Hero />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Hero user={user} />
             <Features />
             <Bento />
-            <HowItWorks />
             <Testimonials />
             <FAQ />
-            <CTABanner />
+            <CTABanner user={user} />
             <Footer />
           </>
         }
@@ -649,8 +748,8 @@ export default function App() {
         path="/cennik"
         element={
           <>
-            <Navbar />
-            <Pricing />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Pricing user={user} isPremium={premium.isPremium} />
             <Footer />
           </>
         }
@@ -659,7 +758,7 @@ export default function App() {
         path="/kursy"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <Courses />
             <Footer />
           </>
@@ -669,11 +768,59 @@ export default function App() {
         path="/kursy/:courseId"
         element={
           <>
-            <Navbar />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
             <CoursePlayer />
             <Footer />
           </>
         }
+      />
+      <Route
+        path="/wip"
+        element={
+          <>
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <div style={{ paddingTop: '150px', paddingBottom: '100px', textAlign: 'center', minHeight: '80vh', background: 'var(--surface-alt)' }}>
+              <div className="container">
+                <h1 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '24px' }}>Work In Progress 🛠️</h1>
+                <p style={{ fontSize: '1.25rem', color: 'var(--text-secondary)' }}>Ta strona jest w budowie. Wkrótce dodamy tutaj link do zbiórki,<br/>gdzie będziesz mógł wesprzeć rozwój ScoreLab!</p>
+              </div>
+            </div>
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/jak-to-dziala"
+        element={
+          <>
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <HowItWorksPage />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/statystyki"
+        element={
+          <>
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Statistics />
+            <Footer />
+          </>
+        }
+      />
+      <Route
+        path="/ustawienia"
+        element={
+          <>
+            <Navbar user={user} isSettingsPage={true} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Settings />
+          </>
+        }
+      />
+      <Route
+        path="/admin"
+        element={<AdminPanel />}
       />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

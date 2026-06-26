@@ -1,0 +1,448 @@
+.settings-page {
+  display: flex;
+  min-height: 100vh;
+  background: var(--white);
+  color: var(--text-primary);
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+.settings-home-logo {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  z-index: 100;
+  transition: opacity 0.2s;
+}
+
+.settings-home-logo:hover {
+  opacity: 0.8;
+}
+
+.settings-home-logo img {
+  height: 36px;
+  width: auto;
+}
+
+/* Sidebar */
+.settings-sidebar {
+  width: 320px;
+  background: var(--bg-light);
+  padding: 100px 32px 60px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+  border-right: 1px solid var(--border);
+}
+
+.sidebar-header {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  margin-bottom: 4px;
+  letter-spacing: 0.08em;
+}
+
+.sidebar-item {
+  padding: 12px 16px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  transition: all 0.2s;
+}
+
+.sidebar-item:hover {
+  background: rgba(0, 102, 255, 0.06);
+  color: var(--blue-light);
+}
+
+.sidebar-item.active {
+  background: var(--blue-light);
+  color: var(--white);
+  box-shadow: 0 4px 14px rgba(0, 102, 255, 0.25);
+}
+
+.sidebar-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 16px 12px;
+}
+
+/* Main Content */
+.settings-content {
+  flex: 1;
+  padding: 80px 100px;
+  max-width: 1400px;
+  margin: 0 auto;
+  animation: fadeIn 0.4s ease-out;
+}
+
+.settings-section-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--black);
+  margin-bottom: 32px;
+  letter-spacing: -0.03em;
+}
+
+/* My Account View */
+.account-card {
+  background: var(--white);
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  margin-bottom: 48px;
+  box-shadow: var(--shadow-lg);
+}
+
+.account-card__banner {
+  height: 160px;
+  background: linear-gradient(135deg, var(--blue-light) 0%, #6aaee8 100%);
+}
+
+.account-card__content {
+  padding: 32px;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.account-card__avatar-wrapper {
+  position: absolute;
+  top: -80px;
+  left: 32px;
+  padding: 8px;
+  background: var(--white);
+  border-radius: 50%;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+
+.account-card__avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--blue-light) 0%, #6aaee8 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+  font-weight: 800;
+  color: white;
+  border: 6px solid var(--white);
+}
+
+.account-card__info {
+  margin-top: 70px;
+}
+
+.account-card__name {
+  font-size: 32px;
+  font-weight: 800;
+  color: var(--black);
+}
+
+.account-card__tag {
+  color: var(--text-muted);
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.account-card__edit-btn {
+  background: var(--black);
+  color: white;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 99px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.account-card__edit-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+/* Data List */
+.data-list {
+  background: var(--bg-light);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-top: 24px;
+}
+
+.data-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.data-item__label {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+  letter-spacing: 0.08em;
+}
+
+.data-item__value {
+  font-size: 18px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.data-item__action {
+  background: var(--white);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  padding: 10px 20px;
+  border-radius: 99px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.data-item__action:hover {
+  background: var(--blue-light);
+  color: var(--white);
+  border-color: var(--blue-light);
+}
+
+/* Settings Groups & Toggles */
+.settings-view {
+  width: 100%;
+}
+
+.settings-group {
+  margin-bottom: 48px;
+}
+
+.settings-group-title {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  margin-bottom: 20px;
+}
+
+.settings-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.settings-row:last-child {
+  border-bottom: none;
+}
+
+.settings-row__label {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--black);
+}
+
+.settings-row__desc {
+  font-size: 15px;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.settings-toggle {
+  width: 52px;
+  height: 28px;
+  background: #cbd5e0;
+  border-radius: 99px;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.settings-toggle--active {
+  background: var(--blue-light);
+}
+
+.settings-toggle__handle {
+  width: 22px;
+  height: 22px;
+  background: white;
+  border-radius: 50%;
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  transition: transform 0.2s;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.settings-toggle--active .settings-toggle__handle {
+  transform: translateX(24px);
+}
+
+/* Theme Selector */
+.theme-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
+  margin-top: 20px;
+}
+
+.theme-option {
+  cursor: pointer;
+  text-align: center;
+}
+
+.theme-preview {
+  height: 120px;
+  border-radius: 16px;
+  border: 2px solid var(--border);
+  margin-bottom: 12px;
+  transition: all 0.2s;
+}
+
+.theme-preview--light { background: #f7fafc; }
+.theme-preview--dark { background: #1a202c; }
+.theme-preview--system { background: linear-gradient(135deg, #f7fafc 50%, #1a202c 50%); }
+
+.theme-option:hover .theme-preview {
+  border-color: #cbd5e0;
+  transform: translateY(-2px);
+}
+
+.theme-option.active .theme-preview {
+  border-color: var(--blue-light);
+  box-shadow: 0 0 0 2px rgba(0, 102, 255, 0.2);
+}
+
+/* Password Section */
+.password-section {
+  margin-top: 48px;
+  padding: 40px;
+  background: var(--bg-light);
+  border-radius: 24px;
+}
+
+.change-password-btn {
+  background: var(--blue-light);
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 99px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+/* Delete Account Section */
+.delete-account-section {
+  margin-top: 48px;
+  padding: 40px;
+  background: #fff5f5;
+  border-radius: 24px;
+  border: 1px solid #feb2b2;
+}
+
+.delete-account-text {
+  color: #718096;
+  font-size: 15px;
+  line-height: 1.7;
+  margin-bottom: 24px;
+  max-width: 600px;
+}
+
+.delete-account-btn {
+  background: white;
+  color: #e53e3e;
+  border: 1px solid #e53e3e;
+  padding: 12px 28px;
+  border-radius: 99px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.delete-account-btn:hover {
+  background: #e53e3e;
+  color: white;
+}
+
+/* Premium View */
+.premium-placeholder-card {
+  background: var(--white);
+  border-radius: 32px;
+  border: 1px solid var(--border);
+  padding: 80px 60px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow-xl);
+}
+
+.premium-badge {
+  background: var(--blue-light);
+  color: white;
+  padding: 6px 20px;
+  border-radius: 99px;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  margin-bottom: 12px;
+}
+
+.premium-placeholder-card h3 {
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--black);
+  max-width: 500px;
+}
+
+.premium-placeholder-card p {
+  color: var(--text-secondary);
+  max-width: 500px;
+  line-height: 1.7;
+  font-size: 17px;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(15px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 1200px) {
+  .settings-content {
+    padding: 60px 40px;
+  }
+}
+
+@media (max-width: 992px) {
+  .settings-sidebar {
+    width: 260px;
+    padding: 80px 20px 60px 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .settings-sidebar {
+    display: none;
+  }
+  .settings-content {
+    padding: 32px 24px;
+  }
+}
