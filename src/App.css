@@ -45,8 +45,19 @@
   width: auto;
 }
 
+/* Light mode: inverted logo (original look). Dark mode: no invert. */
 .navbar__logo img.invert-logo {
   filter: invert(1);
+}
+
+[data-theme="dark"] .navbar__logo img.invert-logo {
+  filter: none;
+}
+
+/* Footer sits on a dark background in both themes → always the white logo
+   (its natural rendering), so no inversion. */
+.footer__logo img {
+  filter: none;
 }
 
 /* Desktop: full logo, hide small */
@@ -2025,4 +2036,78 @@ section {
   .mobile-menu {
     position: absolute !important;
   }
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   DARK MODE PATCHES (main site)
+   Most surfaces recolor automatically via the flipped tokens in
+   index.css. These rules handle hardcoded colors and re-pin the
+   sections that must stay dark in both themes.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Translucent white bars → translucent dark */
+[data-theme="dark"] .navbar {
+  background: rgba(15, 17, 21, 0.85);
+}
+
+[data-theme="dark"] .navbar.scrolled {
+  background: rgba(15, 17, 21, 0.97);
+}
+
+[data-theme="dark"] .mobile-menu {
+  background: rgba(15, 17, 21, 0.98);
+}
+
+/* User dropdown menu (hardcoded white) */
+[data-theme="dark"] .user-dropdown {
+  background: #161922;
+  border-color: rgba(255, 255, 255, 0.10);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .user-dropdown__item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .user-dropdown__item--logout:hover {
+  background: rgba(229, 62, 62, 0.14);
+}
+
+/* Sections that are dark by design in BOTH themes: restore the raw
+   black/white tokens locally so their var(--black) backgrounds stay dark
+   and var(--white) accents stay white. */
+[data-theme="dark"] .footer,
+[data-theme="dark"] .cta-banner,
+[data-theme="dark"] .how-it-works,
+[data-theme="dark"] .showcase-visual-card-wide,
+[data-theme="dark"] .pricing-card--featured,
+[data-theme="dark"] .bento-cell--narrow {
+  --black: #0d0d0d;
+  --white: #ffffff;
+}
+
+/* The "narrow" bento card sets its dark background via an inline style using
+   var(--black); the re-pin above keeps it dark. Ensure its border blends. */
+[data-theme="dark"] .bento-cell--narrow {
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+/* Light-blue placeholder gradients → dark in dark mode */
+[data-theme="dark"] .hero__placeholder {
+  background: linear-gradient(135deg, #161922 0%, #1d2738 100%);
+}
+
+[data-theme="dark"] .bento-cell__media-placeholder {
+  background: linear-gradient(135deg, #1c2230 0%, #12151c 100%);
+  border-color: rgba(155, 202, 242, 0.22);
+}
+
+/* The "Matura 2024" bento card uses an inline blue→light gradient */
+[data-theme="dark"] .bento-cell--half[style*="linear-gradient"] {
+  background: linear-gradient(135deg, #1a2436 0%, #12151c 100%) !important;
+}
+
+/* Hero app-card placeholder area */
+[data-theme="dark"] .hero__app-card {
+  background: #12151c;
 }

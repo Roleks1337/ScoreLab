@@ -76,6 +76,40 @@
   --duration-slow: 400ms;
 }
 
+/* ── Dark theme tokens ───────────────────────────────────────── */
+/* Flipping the raw black/white tokens recolors the whole app. Sections that
+   must stay dark in both themes (footer, CTA banner, dark cards) re-pin these
+   tokens locally in App.css. */
+:root[data-theme="dark"] {
+  --black: #e9ebee;
+  --white: #12151c;
+  --bg-light: #161922;
+  --cream: #2a2418;
+
+  --gray-100: #1a1e27;
+  --gray-200: #20252f;
+  --gray-400: #6b7382;
+  --gray-600: #9aa3b0;
+  --gray-800: #c8cdd6;
+
+  --text-primary: #e9ebee;
+  --text-secondary: #9aa3b0;
+  --text-muted: #7b8492;
+  --surface: #0f1115;
+  --surface-alt: #161922;
+  --border: rgba(255, 255, 255, 0.10);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 16px rgba(0, 0, 0, 0.45), 0 1px 4px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 12px 40px rgba(0, 0, 0, 0.5), 0 4px 12px rgba(0, 0, 0, 0.35);
+  --shadow-xl: 0 24px 64px rgba(0, 0, 0, 0.55), 0 8px 20px rgba(0, 0, 0, 0.4);
+}
+
+:root[data-theme="dark"] body {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
 /* ── Reset ───────────────────────────────────────────────────── */
 *,
 *::before,
