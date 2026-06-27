@@ -1008,3 +1008,198 @@
   }
 }
 
+
+/* ── Moderation tab ─────────────────────────────────────── */
+.admin-stat--red .admin-stat__value { color: #ef4444; }
+
+.admin-reports-list {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.admin-report {
+  background: var(--admin-surface, #fff);
+  border: 1px solid var(--admin-border, #e2e8f0);
+  border-radius: 14px;
+  padding: 16px 18px;
+}
+.admin-report--resolved { opacity: 0.62; }
+
+.admin-report__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+.admin-report__lesson {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--admin-text-secondary, #64748b);
+}
+.admin-report__date {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--admin-text-secondary, #94a3b8);
+}
+
+.admin-report__quote {
+  background: var(--admin-surface-alt, #f8fafc);
+  border-left: 3px solid #ef4444;
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin-bottom: 10px;
+}
+.admin-report__quote--gone {
+  border-left-color: #94a3b8;
+  color: var(--admin-text-secondary, #94a3b8);
+  font-style: italic;
+}
+.admin-report__author {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.admin-report__banned-tag {
+  font-size: 10px;
+  font-weight: 800;
+  color: #fff;
+  background: #ef4444;
+  padding: 1px 7px;
+  border-radius: 99px;
+}
+.admin-report__content {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--admin-text, #1e293b);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.admin-report__meta {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  font-size: 12px;
+  color: var(--admin-text-secondary, #64748b);
+  margin-bottom: 12px;
+}
+
+.admin-report__actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-mod-btn {
+  border: 1px solid var(--admin-border, #e2e8f0);
+  background: var(--admin-surface, #fff);
+  color: var(--admin-text, #0f172a);
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.1s, opacity 0.15s;
+}
+.admin-mod-btn:hover:not(:disabled) { transform: translateY(-1px); }
+.admin-mod-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+.admin-mod-btn--danger { background: #ef4444; color: #fff; border-color: #ef4444; }
+.admin-mod-btn--ban { background: #b45309; color: #fff; border-color: #b45309; }
+.admin-mod-btn--gold { background: linear-gradient(135deg, #f59e0b, #d97706); color: #fff; border-color: #d97706; }
+
+/* ── Code generator: compact number input ───────────────── */
+.admin-input--mini {
+  width: 72px;
+  padding: 8px 10px;
+  text-align: center;
+}
+
+/* ── User management (Users tab) ─────────────────────────── */
+.admin-stat--gold .admin-stat__value { color: #fbbf24; }
+
+.admin-user-search { margin-bottom: 14px; }
+
+.admin-ubadge {
+  margin-left: 6px;
+  font-size: 13px;
+  vertical-align: middle;
+}
+
+.admin-umgmt-row {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 14px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 14px;
+  transition: border-color 0.15s;
+}
+.admin-umgmt-row:hover { border-color: rgba(99, 102, 241, 0.25); }
+.admin-umgmt-row--hidden {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(100, 116, 139, 0.07),
+    rgba(100, 116, 139, 0.07) 10px,
+    rgba(255, 255, 255, 0.02) 10px,
+    rgba(255, 255, 255, 0.02) 20px
+  );
+}
+
+.admin-umgmt-row__main {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.admin-umgmt-row__main .admin-user-row__info {
+  flex: 1;
+  min-width: 180px;
+}
+.admin-umgmt-row__main .admin-user-row__name {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.admin-umgmt-row__status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.admin-umgmt-row__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-left: auto;
+}
+
+.admin-grant-panel {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: rgba(251, 191, 36, 0.07);
+  border: 1px solid rgba(251, 191, 36, 0.2);
+}
+.admin-grant-panel__label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #fcd34d;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 900px) {
+  .admin-umgmt-row__actions { margin-left: 0; }
+}

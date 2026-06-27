@@ -3,6 +3,9 @@ import { Link, useLocation } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
 import { usePremium } from '../lib/usePremium';
 import { useAdmin } from '../lib/useAdmin';
+import { useProfile, effectiveBanner } from '../lib/useProfile';
+import Avatar from './Avatar';
+import ProfileEditor from './ProfileEditor';
 import logoFull from '../assets/Zasob1.svg';
 import {
   type ThemeChoice,
@@ -55,11 +58,16 @@ export default function Settings() {
 
   const premium = usePremium(user?.id);
   const admin = useAdmin(user?.id);
+  const { profile, update: updateProfile } = useProfile(user?.id);
+  const [editorOpen, setEditorOpen] = useState(false);
+  const [emailRevealed, setEmailRevealed] = useState(false);
+
+  const role = admin.isAdmin ? 'admin' : (premium.isPremium ? 'premium' : 'user');
+  const displayName = profile?.display_name || user?.user_metadata?.full_name || null;
+  const banner = effectiveBanner(profile?.banner_color, role);
 
   if (loading) return <div className="settings-page"><div className="settings-content">Ładowanie...</div></div>;
   if (!user) return <div className="settings-page"><div className="settings-content">Musisz być zalogowany, aby zobaczyć tę stronę.</div></div>;
-
-  const initials = user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase();
 
   const formatDate = (date: Date | null) => {
     if (!date) return '—';
@@ -86,9 +94,23 @@ export default function Settings() {
       return;
     }
 
+    // Reject codes past their redemption deadline.
+    if (codeData.valid_until && new Date(codeData.valid_until) < new Date()) {
+      setCodeMessage({ type: 'error', text: 'Ten kod wygasł i nie można go już użyć.' });
+      setCodeLoading(false);
+      return;
+    }
+
     // If it's a single-use code, check if it has already been used
     if (!codeData.multi_use && codeData.used) {
       setCodeMessage({ type: 'error', text: 'Ten kod został już wykorzystany.' });
+      setCodeLoading(false);
+      return;
+    }
+
+    // For multi-use codes with a numeric cap, reject once the cap is reached.
+    if (codeData.multi_use && codeData.max_uses != null && (codeData.uses ?? 0) >= codeData.max_uses) {
+      setCodeMessage({ type: 'error', text: 'Limit użyć tego kodu został wyczerpany.' });
       setCodeLoading(false);
       return;
     }
@@ -145,13 +167,18 @@ export default function Settings() {
         user_id: user.id
       });
 
-    // Mark code as used only if it is a single-use code
+    // Increment the usage counter (used to enforce max_uses), and mark
+    // single-use codes as fully used.
+    const codeUpdate: Record<string, unknown> = { uses: (codeData.uses ?? 0) + 1 };
     if (!codeData.multi_use) {
-      await supabase
-        .from('premium_codes')
-        .update({ used: true, used_by: user.id, used_at: new Date().toISOString() })
-        .eq('id', codeData.id);
+      codeUpdate.used = true;
+      codeUpdate.used_by = user.id;
+      codeUpdate.used_at = new Date().toISOString();
     }
+    await supabase
+      .from('premium_codes')
+      .update(codeUpdate)
+      .eq('id', codeData.id);
 
     setCodeMessage({
       type: 'success',
@@ -163,7 +190,20 @@ export default function Settings() {
   };
 
   return (
-    <div className={`settings-page${admin.isAdmin ? ' settings-page--admin' : (premium.isPremium ? ' settings-page--premium' : '')}`}>
+    <div
+      className={`settings-page${admin.isAdmin ? ' settings-page--admin' : (premium.isPremium ? ' settings-page--premium' : '')}`}
+      style={{ ['--sl-accent' as any]: banner }}
+    >
+      {editorOpen && (
+        <ProfileEditor
+          userId={user.id}
+          email={user.email}
+          role={role}
+          profile={profile}
+          onClose={() => setEditorOpen(false)}
+          onSaved={updateProfile}
+        />
+      )}
       <div className="settings-sidebar">
         <Link to="/" className="settings-home-logo">
           <img className="invert-logo" src={logoFull} alt="ScoreLab Logo" />
@@ -222,17 +262,24 @@ export default function Settings() {
             <h2 className="settings-section-title">Moje konto</h2>
 
             <div className="account-card">
-              <div className={`account-card__banner${admin.isAdmin ? ' account-card__banner--admin' : (premium.isPremium ? ' account-card__banner--premium' : '')}`} />
+              <div
+                className="account-card__banner"
+                style={{ background: banner }}
+              />
               <div className="account-card__content">
                 <div className="account-card__avatar-wrapper">
-                  <div className={`account-card__avatar${admin.isAdmin ? ' account-card__avatar--admin' : (premium.isPremium ? ' account-card__avatar--premium' : '')}`}>
-                    {initials}
-                    {!admin.isAdmin && premium.isPremium && <span className="avatar-crown">👑</span>}
-                  </div>
+                  <Avatar
+                    name={displayName || user.email}
+                    avatarUrl={profile?.avatar_url}
+                    role={role}
+                    color={banner}
+                    size={128}
+                    showMarker
+                  />
                 </div>
                 <div className="account-card__info">
                   <div className="account-card__name">
-                    {user.user_metadata?.full_name || 'Użytkownik'}
+                    {displayName || 'Użytkownik'}
                     {admin.isAdmin ? (
                       <span className="name-admin-badge">Admin</span>
                     ) : (
@@ -241,7 +288,7 @@ export default function Settings() {
                   </div>
                   <div className="account-card__tag">#{user.id.slice(0, 4)}</div>
                 </div>
-                <button className="account-card__edit-btn">Edytuj profil użytkownika</button>
+                <button className="account-card__edit-btn" onClick={() => setEditorOpen(true)}>Edytuj profil użytkownika</button>
               </div>
 
               <div className="account-card__details" style={{ padding: '0 16px 16px' }}>
@@ -249,28 +296,43 @@ export default function Settings() {
                   <div className="data-item">
                     <div>
                       <div className="data-item__label">Nazwa wyświetlana</div>
-                      <div className="data-item__value">{user.user_metadata?.full_name || 'Nie ustawiono'}</div>
+                      <div className="data-item__value">{displayName || 'Nie ustawiono'}</div>
                     </div>
-                    <button className="data-item__action">Edytuj</button>
+                    <button className="data-item__action" onClick={() => setEditorOpen(true)}>Edytuj</button>
                   </div>
 
                   <div className="data-item">
                     <div>
                       <div className="data-item__label">Email</div>
                       <div className="data-item__value">
-                        {user.email.replace(/(.{3}).*(@.*)/, '$1********$2')}
-                        <span style={{ color: 'var(--discord-blue)', marginLeft: '8px', cursor: 'pointer', fontSize: '12px' }}>Odkryj</span>
+                        {emailRevealed ? user.email : user.email.replace(/(.{3}).*(@.*)/, '$1********$2')}
+                        <span
+                          onClick={() => setEmailRevealed(v => !v)}
+                          style={{ color: 'var(--discord-blue)', marginLeft: '8px', cursor: 'pointer', fontSize: '12px' }}
+                        >
+                          {emailRevealed ? 'Ukryj' : 'Odkryj'}
+                        </span>
                       </div>
                     </div>
-                    <button className="data-item__action">Edytuj</button>
+                    <button className="data-item__action" onClick={() => setEditorOpen(true)}>Edytuj</button>
+                  </div>
+
+                  <div className="data-item">
+                    <div>
+                      <div className="data-item__label">Widoczność e-maila</div>
+                      <div className="data-item__value">
+                        {profile?.email_public ? '🌐 Publiczny — widoczny dla innych' : '🔒 Prywatny — ukryty'}
+                      </div>
+                    </div>
+                    <button className="data-item__action" onClick={() => setEditorOpen(true)}>Zmień</button>
                   </div>
 
                   <div className="data-item">
                     <div>
                       <div className="data-item__label">Numer telefonu</div>
-                      <div className="data-item__value">Nie dodano numeru telefonu</div>
+                      <div className="data-item__value">{profile?.phone || 'Nie dodano numeru telefonu'}</div>
                     </div>
-                    <button className="data-item__action">Dodaj</button>
+                    <button className="data-item__action" onClick={() => setEditorOpen(true)}>{profile?.phone ? 'Edytuj' : 'Dodaj'}</button>
                   </div>
 
                   {(premium.isPremium || admin.isAdmin) && (

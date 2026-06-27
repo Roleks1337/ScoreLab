@@ -3,6 +3,7 @@ import { Link, Navigate, Route, Routes, useLocation, useNavigate } from 'react-r
 import { supabase } from './lib/supabase'
 import { usePremium } from './lib/usePremium'
 import { useAdmin } from './lib/useAdmin'
+import { useProfile } from './lib/useProfile'
 import './index.css'
 import './App.css'
 import Pricing from './components/Pricing'
@@ -16,7 +17,7 @@ import Statistics from './components/Statistics'
 import AdminPanel from './components/AdminPanel'
 
 /* ── Navbar ────────────────────────────────────────────────── */
-function Navbar({ user, isSettingsPage, isPremium, isAdmin }: { user: any, isSettingsPage?: boolean, isPremium?: boolean, isAdmin?: boolean }) {
+function Navbar({ user, isSettingsPage, isPremium, isAdmin, avatarUrl, displayName }: { user: any, isSettingsPage?: boolean, isPremium?: boolean, isAdmin?: boolean, avatarUrl?: string | null, displayName?: string | null }) {
   const [scrolled, setScrolled] = useState(false)
   const [menuOpen, setMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
@@ -81,13 +82,14 @@ function Navbar({ user, isSettingsPage, isPremium, isAdmin }: { user: any, isSet
         <div className="navbar__actions">
           {user ? (
             <div className="navbar__user-container">
-              <div 
-                className={`navbar__avatar${isPremium ? ' navbar__avatar--premium' : ''}${isAdmin ? ' navbar__avatar--admin' : ''}`}
+              <div
+                className={`navbar__avatar${isPremium ? ' navbar__avatar--premium' : ''}${isAdmin ? ' navbar__avatar--admin' : ''}${avatarUrl ? ' navbar__avatar--image' : ''}`}
                 onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
-                title={user.user_metadata?.full_name || user.email}
+                title={displayName || user.user_metadata?.full_name || user.email}
+                style={avatarUrl ? { backgroundImage: `url(${avatarUrl})`, backgroundSize: 'cover', backgroundPosition: 'center' } : undefined}
               >
                 {!isAdmin && isPremium && <span className="navbar__avatar-crown">👑</span>}
-                {user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase()}
+                {!avatarUrl && (displayName?.charAt(0).toUpperCase() || user.user_metadata?.full_name?.charAt(0).toUpperCase() || user.email?.charAt(0).toUpperCase())}
               </div>
               
               {isUserMenuOpen && (
@@ -96,7 +98,7 @@ function Navbar({ user, isSettingsPage, isPremium, isAdmin }: { user: any, isSet
                   <div className="user-dropdown">
                     <div className="user-dropdown__header">
                       <div className="user-dropdown__name">
-                        {user.user_metadata?.full_name || 'Użytkownik'}
+                        {displayName || user.user_metadata?.full_name || 'Użytkownik'}
                         {isAdmin && <span className="user-dropdown__admin-badge">🛡️ Admin</span>}
                         {!isAdmin && isPremium && <span className="user-dropdown__premium-badge">👑 Premium</span>}
                       </div>
@@ -712,6 +714,9 @@ export default function App() {
   const [user, setUser] = useState<any>(null)
   const premium = usePremium(user?.id)
   const admin = useAdmin(user?.id)
+  const { profile } = useProfile(user?.id)
+  const avatarUrl = profile?.avatar_url ?? null
+  const displayName = profile?.display_name ?? null
 
   useEffect(() => {
     // Get initial session
@@ -733,7 +738,7 @@ export default function App() {
         path="/"
         element={
           <>
-            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <Hero user={user} />
             <Features />
             <Bento />
@@ -748,7 +753,7 @@ export default function App() {
         path="/cennik"
         element={
           <>
-            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <Pricing user={user} isPremium={premium.isPremium} />
             <Footer />
           </>
@@ -758,7 +763,7 @@ export default function App() {
         path="/kursy"
         element={
           <>
-            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <Courses />
             <Footer />
           </>
@@ -768,7 +773,7 @@ export default function App() {
         path="/kursy/:courseId"
         element={
           <>
-            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <CoursePlayer />
             <Footer />
           </>
@@ -778,7 +783,7 @@ export default function App() {
         path="/wip"
         element={
           <>
-            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <div style={{ paddingTop: '150px', paddingBottom: '100px', textAlign: 'center', minHeight: '80vh', background: 'var(--surface-alt)' }}>
               <div className="container">
                 <h1 style={{ fontSize: '3rem', fontWeight: 900, marginBottom: '24px' }}>Work In Progress 🛠️</h1>
@@ -793,7 +798,7 @@ export default function App() {
         path="/jak-to-dziala"
         element={
           <>
-            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <HowItWorksPage />
             <Footer />
           </>
@@ -803,7 +808,7 @@ export default function App() {
         path="/statystyki"
         element={
           <>
-            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <Statistics />
             <Footer />
           </>
@@ -813,7 +818,7 @@ export default function App() {
         path="/ustawienia"
         element={
           <>
-            <Navbar user={user} isSettingsPage={true} isPremium={premium.isPremium} isAdmin={admin.isAdmin} />
+            <Navbar user={user} isSettingsPage={true} isPremium={premium.isPremium} isAdmin={admin.isAdmin} avatarUrl={avatarUrl} displayName={displayName} />
             <Settings />
           </>
         }

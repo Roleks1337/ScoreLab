@@ -267,3 +267,16 @@
   .stats-card--kpi { grid-column: span 12; }
   .skills-container { grid-template-columns: 1fr; }
 }
+
+/* ── Dark mode ─────────────────────────────────────────────
+   The main card builds its gradient from var(--black), which
+   inverts to a light colour in dark mode (making it unreadable).
+   Pin it to an explicit dark gradient with light text instead. */
+[data-theme="dark"] .stats-card--main {
+  background: linear-gradient(135deg, #1b2030 0%, #0f1320 100%);
+  color: #f1f5f9;
+  border-color: rgba(255, 255, 255, 0.08);
+}
+[data-theme="dark"] .stats-card--main .progress-info p {
+  color: rgba(255, 255, 255, 0.7);
+}

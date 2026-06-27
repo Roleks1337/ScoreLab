@@ -1,0 +1,282 @@
+/* ── Compact comments panel (lives under the episode list) ── */
+.cm {
+  border-top: 1px solid var(--border, #e2e8f0);
+  margin-top: 8px;
+  padding-top: 12px;
+}
+
+.cm__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px 10px;
+}
+
+.cm__title {
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--text-primary, #0f172a);
+}
+
+.cm__count {
+  color: var(--text-secondary, #94a3b8);
+  font-weight: 700;
+}
+
+.cm__rules-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+}
+.cm__rules-btn:hover { color: var(--text-primary, #0f172a); }
+
+.cm__sort {
+  margin-left: auto;
+  font: inherit;
+  font-size: 12px;
+  padding: 5px 8px;
+  border-radius: 8px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--surface, #fff);
+  color: var(--text-primary, #0f172a);
+  cursor: pointer;
+}
+
+.cm__rules {
+  background: var(--surface-alt, #f1f5f9);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.5;
+  color: var(--text-secondary, #64748b);
+  margin: 0 4px 10px;
+}
+
+.cm__note {
+  background: #ecfdf5;
+  border: 1px solid #a7f3d0;
+  color: #047857;
+  padding: 8px 12px;
+  border-radius: 9px;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0 4px 10px;
+}
+
+.cm__login {
+  text-align: center;
+  padding: 16px;
+  font-size: 13px;
+  color: var(--text-secondary, #64748b);
+  border-top: 1px solid var(--border, #e2e8f0);
+  border-bottom: 1px solid var(--border, #e2e8f0);
+  margin-bottom: 10px;
+}
+.cm__login a { color: var(--discord-blue, #0066ff); font-weight: 700; }
+
+/* Composer */
+.cm__composer {
+  display: flex;
+  gap: 10px;
+  padding: 12px;
+  margin: 0 4px 14px;
+  background: var(--surface-alt, #f8fafc);
+  border: 1px solid var(--border, #e2e8f0);
+  border-radius: 14px;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.cm__composer:focus-within {
+  border-color: var(--discord-blue, #0066ff);
+  box-shadow: 0 0 0 3px rgba(0, 102, 255, 0.1);
+}
+.cm__composer-body { flex: 1; min-width: 0; }
+
+.cm__textarea {
+  width: 100%;
+  min-height: 56px;
+  resize: vertical;
+  padding: 9px 11px;
+  border-radius: 10px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--surface, #fff);
+  color: var(--text-primary, #0f172a);
+  font: inherit;
+  font-size: 13px;
+  box-sizing: border-box;
+}
+.cm__textarea:focus {
+  outline: none;
+  border-color: var(--discord-blue, #0066ff);
+}
+
+.cm__composer-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 6px;
+}
+.cm__charcount { font-size: 11px; color: var(--text-secondary, #94a3b8); }
+
+.cm__post {
+  background: var(--discord-blue, #0066ff);
+  color: #fff;
+  border: none;
+  border-radius: 9px;
+  padding: 7px 18px;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.1s, opacity 0.15s;
+}
+.cm__post:hover:not(:disabled) { filter: brightness(1.08); transform: translateY(-1px); }
+.cm__post:disabled { opacity: 0.5; cursor: not-allowed; }
+
+.cm__error { color: #dc2626; font-size: 12px; margin-top: 5px; }
+
+.cm__empty {
+  text-align: center;
+  padding: 20px;
+  font-size: 13px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+/* List */
+.cm__list {
+  display: flex;
+  flex-direction: column;
+}
+
+.cm-item {
+  display: flex;
+  gap: 10px;
+  padding: 12px 8px;
+  border-top: 1px solid var(--border, #eef2f7);
+  border-radius: 10px;
+  transition: background 0.15s;
+}
+.cm-item:hover { background: var(--surface-alt, #f8fafc); }
+
+.cm-item--hidden {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(100, 116, 139, 0.06),
+    rgba(100, 116, 139, 0.06) 10px,
+    transparent 10px,
+    transparent 20px
+  );
+  border-radius: 8px;
+}
+
+.cm-item__body { flex: 1; min-width: 0; }
+
+.cm-item__head {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin-bottom: 3px;
+}
+
+.cm-item__name {
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--text-primary, #0f172a);
+}
+
+.cm-item__date {
+  margin-left: auto;
+  font-size: 11px;
+  color: var(--text-secondary, #94a3b8);
+}
+
+/* "Registered" badge — green outline, distinct from role pills */
+.cm-registered {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 99px;
+  color: #16a34a;
+  border: 1px solid #86efac;
+  background: rgba(34, 197, 94, 0.08);
+  white-space: nowrap;
+}
+
+.cm-hidden {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: 99px;
+  background: #475569;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.cm-item__text {
+  margin: 2px 0 7px;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-primary, #1e293b);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.cm-item__actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.cm-vote {
+  background: var(--surface-alt, #f1f5f9);
+  border: 1px solid var(--border, #e2e8f0);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary, #64748b);
+  padding: 3px 10px;
+  border-radius: 99px;
+  transition: background 0.12s, border-color 0.12s, color 0.12s;
+}
+.cm-vote:hover { background: var(--surface, #fff); border-color: var(--text-secondary, #cbd5e1); }
+.cm-vote--on { color: #16a34a; border-color: #86efac; background: rgba(34, 197, 94, 0.1); }
+.cm-vote--ondown { color: #dc2626; border-color: #fca5a5; background: rgba(220, 38, 38, 0.08); }
+
+.cm-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+}
+.cm-link:hover { color: var(--text-primary, #0f172a); }
+.cm-link--danger { color: #dc2626; }
+.cm-link--ban { color: #b45309; }
+
+.cm-inline {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 12px;
+  color: var(--text-secondary, #64748b);
+}
+
+.cm-reason {
+  font: inherit;
+  font-size: 12px;
+  padding: 3px 7px;
+  border-radius: 7px;
+  border: 1px solid var(--border, #e2e8f0);
+  background: var(--surface, #fff);
+  color: var(--text-primary, #0f172a);
+  width: 120px;
+}
+
+.cm-done { font-size: 12px; font-weight: 700; color: #047857; }

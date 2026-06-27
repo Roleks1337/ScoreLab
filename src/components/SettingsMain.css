@@ -62,18 +62,13 @@
   color: #4a5568;
 }
 
-.sidebar-item.active {
-  background: #0066ff;
-  color: #ffffff;
-}
-
-/* Active sidebar item dynamic colors by role */
-.settings-page--premium .sidebar-item.active {
-  background: linear-gradient(135deg, #f59e0b, #d97706);
-}
-
+/* Active sidebar item follows the user's banner colour (set via --sl-accent).
+   Falls back to the role default, then blue. */
+.sidebar-item.active,
+.settings-page--premium .sidebar-item.active,
 .settings-page--admin .sidebar-item.active {
-  background: linear-gradient(135deg, #ef4444, #dc2626);
+  background: var(--sl-accent, #0066ff);
+  color: #ffffff;
 }
 
 .settings-content {
@@ -1219,6 +1214,21 @@
 [data-theme="dark"] .premium-code-section {
   background: #1a1e27;
   border-color: #262b36;
+}
+
+/* The --admin / --active variants set light gradients with !important,
+   so they need !important dark overrides to stay readable. */
+[data-theme="dark"] .premium-status-bar--admin {
+  background: linear-gradient(135deg, rgba(239, 68, 68, 0.20) 0%, rgba(220, 38, 38, 0.08) 100%) !important;
+  border: 1px solid rgba(239, 68, 68, 0.35) !important;
+}
+[data-theme="dark"] .premium-status-bar--active {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.20) 0%, rgba(217, 119, 6, 0.08) 100%) !important;
+  border: 1px solid rgba(245, 158, 11, 0.35) !important;
+}
+[data-theme="dark"] .premium-status-bar--admin .premium-status-bar__desc,
+[data-theme="dark"] .premium-status-bar--active .premium-status-bar__desc {
+  color: #d7dce4 !important;
 }
 
 [data-theme="dark"] .account-card__avatar-wrapper {
