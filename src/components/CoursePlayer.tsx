@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
+import Comments from './Comments';
 import './Courses.css';
 
 type Task = { id: string; title: string; type: string; url?: string; premium?: boolean };
@@ -149,14 +150,14 @@ const courseDataMap: Record<string, Module[]> = {
 
 export default function CoursePlayer() {
   const { courseId } = useParams();
-  
+
   const [expandedModules, setExpandedModules] = useState<string[]>(['m1']);
   const [activeLessonId, setActiveLessonId] = useState<string>('l2');
   const [activeTab, setActiveTab] = useState<'opis' | 'zadania' | 'pdf'>('opis');
   const [isPlaying, setIsPlaying] = useState<boolean>(false);
 
   const courseName = courseId === 'matematyka' ? 'Matematyka podstawowa' :
-                     courseId === 'jezyk-polski' ? 'Język polski podstawowy' : 
+                     courseId === 'jezyk-polski' ? 'Język polski podstawowy' :
                      'Angielski podstawowy';
 
   const modules = courseDataMap[courseId || ''] || courseDataMap['matematyka'];
@@ -177,7 +178,7 @@ export default function CoursePlayer() {
   }
 
   const toggleModule = (id: string) => {
-    setExpandedModules(prev => 
+    setExpandedModules(prev =>
       prev.includes(id) ? prev.filter(m => m !== id) : [...prev, id]
     );
   };
@@ -205,10 +206,10 @@ export default function CoursePlayer() {
           <div className="course-player__main">
             {activeLesson && activeLesson.videoUrl && isPlaying ? (
               <div className="course-player__video-container" style={{ width: '100%', aspectRatio: '16/9', background: '#000', borderRadius: '16px', overflow: 'hidden', marginBottom: '24px' }}>
-                <video 
-                  controls 
+                <video
+                  controls
                   autoPlay
-                  width="100%" 
+                  width="100%"
                   height="100%"
                   key={activeLesson.id}
                   style={{ objectFit: 'contain' }}
@@ -218,7 +219,7 @@ export default function CoursePlayer() {
                 </video>
               </div>
             ) : (
-              <div 
+              <div
                 className="course-player__video-placeholder"
                 onClick={() => {
                   if (activeLesson?.videoUrl) setIsPlaying(true);
@@ -232,30 +233,30 @@ export default function CoursePlayer() {
                 )}
               </div>
             )}
-            
+
             {activeLesson && (
               <>
                 <div className="course-player__tabs">
-                  <button 
+                  <button
                     className={`tab ${activeTab === 'opis' ? 'active' : ''}`}
                     onClick={() => setActiveTab('opis')}
                   >
                     Opis lekcji
                   </button>
-                  <button 
+                  <button
                     className={`tab ${activeTab === 'zadania' ? 'active' : ''}`}
                     onClick={() => setActiveTab('zadania')}
                   >
                     Zadania ({activeLesson.tasks.length})
                   </button>
-                  <button 
+                  <button
                     className={`tab ${activeTab === 'pdf' ? 'active' : ''}`}
                     onClick={() => setActiveTab('pdf')}
                   >
                     Pliki PDF ({activeLesson.pdfs.length})
                   </button>
                 </div>
-                
+
                 <div className="course-player__tab-content">
                   {activeTab === 'opis' && (
                     <>
@@ -312,7 +313,7 @@ export default function CoursePlayer() {
               <h3>Spis treści</h3>
               <span>2/99 ukończono</span>
             </div>
-            
+
             <div className="playlist-modules">
               {modules.map((mod) => {
                 const isOpen = expandedModules.includes(mod.id);
@@ -334,8 +335,8 @@ export default function CoursePlayer() {
                           else if (lesson.completed && !isActive) icon = '✓';
 
                           return (
-                            <div 
-                              key={lesson.id} 
+                            <div
+                              key={lesson.id}
                               className={`lesson ${isActive ? 'active' : ''} ${lesson.completed ? 'completed' : ''} ${lesson.locked ? 'locked' : ''}`}
                               onClick={() => handleLessonClick(lesson)}
                               style={{ cursor: lesson.locked ? 'not-allowed' : 'pointer', opacity: lesson.locked ? 0.6 : 1 }}
@@ -352,6 +353,15 @@ export default function CoursePlayer() {
                 );
               })}
             </div>
+
+            {activeLesson && (
+              <Comments
+                key={`${courseId || 'matematyka'}/${activeLesson.id}`}
+                courseId={courseId || 'matematyka'}
+                lessonId={activeLesson.id}
+                lessonTitle={activeLesson.title}
+              />
+            )}
           </div>
         </div>
       </div>

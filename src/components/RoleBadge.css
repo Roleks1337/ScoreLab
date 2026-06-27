@@ -1,0 +1,23 @@
+.sl-role {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 99px;
+  letter-spacing: 0.04em;
+  color: #fff;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.sl-role--admin {
+  background: linear-gradient(135deg, #ef4444, #dc2626);
+  box-shadow: 0 1px 5px rgba(239, 68, 68, 0.35);
+}
+
+.sl-role--premium {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  box-shadow: 0 1px 5px rgba(245, 158, 11, 0.35);
+}

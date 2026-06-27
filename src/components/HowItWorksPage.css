@@ -163,12 +163,29 @@
 .step-bridge::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: linear-gradient(to bottom, var(--black), transparent);
-  opacity: 0.1;
+  top: -140px;
+  right: -100px;
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.18), transparent 70%);
+  pointer-events: none;
+}
+
+.step-bridge::after {
+  content: '';
+  position: absolute;
+  bottom: -180px;
+  left: -120px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.12), transparent 70%);
+  pointer-events: none;
+}
+
+.step-bridge .section-label {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.32);
+  color: #b45309;
 }
 
 .bridge-content {
@@ -188,18 +205,35 @@
 
 .bridge-stats {
   display: flex;
-  gap: var(--space-8);
+  gap: var(--space-6);
+  flex-wrap: wrap;
 }
 
 .bridge-stat {
   display: flex;
   flex-direction: column;
+  gap: 6px;
+  padding: 16px 20px;
+  background: rgba(255, 255, 255, 0.72);
+  border: 1px solid var(--border);
+  border-left: 3px solid #f59e0b;
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.bridge-stat:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 26px rgba(245, 158, 11, 0.18);
 }
 
 .bridge-stat .value {
   font-size: var(--text-4xl);
   font-weight: 900;
   line-height: 1;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .bridge-stat .label {
@@ -207,7 +241,7 @@
   text-transform: uppercase;
   font-weight: 700;
   letter-spacing: 0.05em;
-  opacity: 0.7;
+  opacity: 0.65;
 }
 
 .bridge-visual {
@@ -230,7 +264,7 @@
 }
 
 .premium-badge-3d {
-  background: var(--black);
+  background: linear-gradient(160deg, #1c2230 0%, #0d1117 100%);
   color: var(--white);
   padding: var(--space-8) var(--space-10);
   border-radius: var(--radius-2xl);
@@ -238,14 +272,54 @@
   flex-direction: column;
   align-items: center;
   gap: 12px;
-  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35), 0 0 0 1px rgba(245, 158, 11, 0.15);
   transform: rotateY(-10deg) rotateX(10deg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(245, 158, 11, 0.35);
   animation: float 5s infinite ease-in-out;
+  position: relative;
+}
+
+.premium-badge-3d::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.12) 0%, transparent 42%);
+  pointer-events: none;
 }
 
 .premium-badge-3d .crown {
-  font-size: 64px;
+  position: relative;
+  font-size: 70px;
+  line-height: 1;
+  filter: drop-shadow(0 6px 16px rgba(245, 158, 11, 0.5));
+  animation: crown-glow 3s infinite ease-in-out;
+}
+
+.premium-badge-3d .crown::after {
+  content: '';
+  position: absolute;
+  inset: -20px;
+  background: radial-gradient(circle, rgba(245, 158, 11, 0.38) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: crown-halo 3s infinite ease-in-out;
+}
+
+@keyframes crown-glow {
+  0%, 100% {
+    transform: translateY(0);
+    filter: drop-shadow(0 6px 14px rgba(245, 158, 11, 0.45));
+  }
+  50% {
+    transform: translateY(-5px);
+    filter: drop-shadow(0 12px 24px rgba(245, 158, 11, 0.8));
+  }
+}
+
+@keyframes crown-halo {
+  0%, 100% { opacity: 0.55; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.12); }
 }
 
 .premium-badge-3d .text {
@@ -425,7 +499,8 @@
 @media (max-width: 900px) {
 
   .mission-content,
-  .ai-content {
+  .ai-content,
+  .bridge-content {
     grid-template-columns: 1fr;
   }
 
@@ -436,6 +511,20 @@
   .ai-visual {
     order: -1;
     margin-bottom: var(--space-8);
+  }
+
+  .bridge-visual {
+    order: -1;
+    height: 240px;
+    margin-bottom: var(--space-6);
+  }
+
+  .bridge-stats {
+    gap: var(--space-4);
+  }
+
+  .bridge-stat {
+    flex: 1 1 140px;
   }
 }
 
@@ -452,4 +541,12 @@
 /* Soften the white glow so it isn't harsh on a dark page */
 [data-theme="dark"] .floating-glow {
   opacity: 0.18;
+}
+
+/* The bridge band is a LIGHT blue panel by design. Pin the tokens so the
+   global dark flip doesn't turn its dark text white (which would be
+   unreadable on the light-blue background). */
+[data-theme="dark"] .step-bridge {
+  --black: #0d1117;
+  --white: #ffffff;
 }
